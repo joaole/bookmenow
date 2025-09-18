@@ -48,8 +48,14 @@ class BaseModel(ABC):
                 result = query.execute()
             else:
                 # INSERT: Insere um novo registro
-                # O método insert() espera um dicionário ou uma lista de dicionários
-                result = supabase_client.table(self.table_name).insert(data).execute()
+                # Cria uma cópia dos dados para não modificar o objeto original
+                insert_data = data.copy()
+                # Remove a chave primária do dicionário se ela for None,
+                # para que o banco de dados possa gerá-la automaticamente.
+                if insert_data.get(self.primary_key) is None:
+                    del insert_data[self.primary_key]
+                
+                result = supabase_client.table(self.table_name).insert(insert_data).execute()
             
             # Após a inserção, o Supabase retorna os dados do novo registro.
             # Atualizamos o objeto com o ID gerado pelo banco.

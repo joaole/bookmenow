@@ -1,6 +1,6 @@
 
 from typing import Dict
-from bookmenow.models.base_model import BaseModel
+from models.base_model import BaseModel
 
 class Exemplar(BaseModel):
     """
