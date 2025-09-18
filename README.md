@@ -89,6 +89,9 @@ python main.py
 
 O menu principal da aplicação será exibido no terminal, e você poderá começar a interagir com o sistema.
 
+
+![alt text](image.png)
+
 ## Próximos Passos
 
 *   Implementar a lógica completa para a gestão de **Exemplares** (listar, atualizar, deletar).
