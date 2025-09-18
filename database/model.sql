@@ -1,0 +1,44 @@
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.emprestimos (
+  id integer NOT NULL DEFAULT nextval('emprestimos_id_seq'::regclass),
+  usuario_id integer NOT NULL,
+  exemplar_id integer NOT NULL,
+  data_emprestimo timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  data_devolucao_prevista date NOT NULL,
+  data_devolucao_efetiva date,
+  CONSTRAINT emprestimos_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_usuario FOREIGN KEY (usuario_id) REFERENCES public.usuarios(id),
+  CONSTRAINT fk_exemplar FOREIGN KEY (exemplar_id) REFERENCES public.exemplares(id)
+);
+CREATE TABLE public.exemplares (
+  id integer NOT NULL DEFAULT nextval('exemplares_id_seq'::regclass),
+  livro_id integer NOT NULL,
+  localizacao jsonb NOT NULL UNIQUE,
+  disponivel boolean DEFAULT true,
+  CONSTRAINT exemplares_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_livro FOREIGN KEY (livro_id) REFERENCES public.livros(livro_id)
+);
+CREATE TABLE public.livros (
+  livro_id integer NOT NULL DEFAULT nextval('livros_livro_id_seq'::regclass),
+  titulo character varying NOT NULL,
+  autor character varying,
+  editora character varying,
+  ano_publicacao integer,
+  CONSTRAINT livros_pkey PRIMARY KEY (livro_id)
+);
+CREATE TABLE public.usuarios (
+  id integer NOT NULL DEFAULT nextval('usuarios_id_seq'::regclass),
+  nome character varying NOT NULL,
+  email character varying NOT NULL UNIQUE,
+  senha_hash character varying NOT NULL,
+  telefone character varying,
+  endereco text,
+  ativo boolean DEFAULT true,
+  data_cadastro timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  tipo_usuario character varying NOT NULL CHECK (tipo_usuario::text = ANY (ARRAY['leitor'::character varying, 'administrador'::character varying]::text[])),
+  matricula character varying UNIQUE,
+  cargo character varying,
+  CONSTRAINT usuarios_pkey PRIMARY KEY (id)
+);

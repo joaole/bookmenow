@@ -1,0 +1,122 @@
+
+from abc import ABC, abstractmethod
+from typing import List, TypeVar, Type, Dict, Any
+from config import supabase_client
+
+# Genérico para representar uma instância de uma subclasse de BaseModel
+T = TypeVar('T', bound='BaseModel')
+
+class BaseModel(ABC):
+    """
+    Classe base abstrata para o ORM (Active Record).
+
+    Fornece métodos CRUD básicos que interagem com o Supabase.
+    As classes de modelo concretas devem herdar desta classe e definir
+    a propriedade 'table_name'.
+    """
+
+    # O nome da tabela no Supabase. Deve ser sobrescrito pelas subclasses.
+    table_name: str = ""
+    # O nome da chave primária. Pode ser sobrescrito se não for 'id'.
+    primary_key: str = "id"
+
+    def __init__(self, **kwargs):
+        """
+        Inicializa o objeto do modelo com os dados passados.
+        Os nomes dos argumentos devem corresponder às colunas da tabela.
+        """
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def save(self) -> None:
+        """
+        Salva (insere ou atualiza) o registro no banco de dados.
+
+        Se o objeto já tem um ID (chave primária), ele executa um UPDATE.
+        Caso contrário, executa um INSERT.
+        """
+        # Converte o objeto em um dicionário para o Supabase
+        data = self.__dict__
+        pk_value = getattr(self, self.primary_key, None)
+
+        try:
+            if pk_value:
+                # UPDATE: Atualiza um registro existente
+                # O método update() espera um dicionário com os novos dados
+                query = supabase_client.table(self.table_name).update(data)
+                query = query.eq(self.primary_key, pk_value)
+                result = query.execute()
+            else:
+                # INSERT: Insere um novo registro
+                # O método insert() espera um dicionário ou uma lista de dicionários
+                result = supabase_client.table(self.table_name).insert(data).execute()
+            
+            # Após a inserção, o Supabase retorna os dados do novo registro.
+            # Atualizamos o objeto com o ID gerado pelo banco.
+            if not pk_value and result.data:
+                new_data = result.data[0]
+                for key, value in new_data.items():
+                    setattr(self, key, value)
+
+        except Exception as e:
+            print(f"Erro ao salvar no banco de dados ({self.table_name}): {e}")
+
+    def delete(self) -> None:
+        """
+        Deleta o registro correspondente do banco de dados.
+        """
+        pk_value = getattr(self, self.primary_key, None)
+        if not pk_value:
+            print("Erro: Não é possível deletar um objeto que ainda não foi salvo.")
+            return
+
+        try:
+            supabase_client.table(self.table_name).delete().eq(self.primary_key, pk_value).execute()
+        except Exception as e:
+            print(f"Erro ao deletar no banco de dados ({self.table_name}): {e}")
+
+    @classmethod
+    def find_by_id(cls: Type[T], pk_value: Any) -> T | None:
+        """
+        Busca um único registro pela sua chave primária.
+
+        Args:
+            pk_value: O valor da chave primária a ser buscada.
+
+        Returns:
+            Uma instância da classe do modelo se encontrado, caso contrário None.
+        """
+        try:
+            result = supabase_client.table(cls.table_name).select("*").eq(cls.primary_key, pk_value).execute()
+            if result.data:
+                # Cria uma instância da classe com os dados retornados
+                return cls(**result.data[0])
+            return None
+        except Exception as e:
+            print(f"Erro ao buscar por ID na tabela {cls.table_name}: {e}")
+            return None
+
+    @classmethod
+    def find_all(cls: Type[T]) -> List[T]:
+        """
+        Busca todos os registros de uma tabela.
+
+        Returns:
+            Uma lista de instâncias da classe do modelo.
+        """
+        try:
+            result = supabase_client.table(cls.table_name).select("*").execute()
+            if result.data:
+                # Cria uma lista de instâncias da classe
+                return [cls(**item) for item in result.data]
+            return []
+        except Exception as e:
+            print(f"Erro ao buscar todos os registros na tabela {cls.table_name}: {e}")
+            return []
+
+    def __repr__(self) -> str:
+        """
+        Representação em string do objeto, útil para debugging.
+        """
+        attrs = ", ".join(f"{k}={v!r}" for k, v in self.__dict__.items())
+        return f"<{self.__class__.__name__}({attrs})>"
