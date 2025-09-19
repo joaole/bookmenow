@@ -1,5 +1,26 @@
 import json
-from typing import Dict, Any
+from typing import List, Dict, Any
+from models.exemplar import Exemplar
+from models.exemplar import Exemplar
+
+def display_exemplares(exemplares: List[Exemplar]) -> None:
+    """
+    Exibe uma lista de exemplares no terminal de forma formatada.
+
+    Args:
+        exemplares: Uma lista de objetos Exemplar.
+    """
+    if not exemplares:
+        print("\nNenhum exemplar cadastrado")
+        return
+
+    print("\n--- Lista de Exemplares ---")
+    for exemplar in exemplares:
+        print(f"ID: {exemplar.id}")
+        print(f"ID do livro: {exemplar.livro_id}")
+        print(f"Localização: {exemplar.localizacao}")
+        print(f"Disponibilidade: {exemplar.disponivel}")
+        print("-" * 20)
 
 def get_exemplar_info() -> Dict[str, Any]:
     """
@@ -14,12 +35,13 @@ def get_exemplar_info() -> Dict[str, Any]:
         try:
             livro_id_str = input("Digite o ID do livro ao qual este exemplar pertence: ")
             livro_id = int(livro_id_str)
+
             break
         except ValueError:
             print("ID do livro inválido. Por favor, digite um número.")
 
     print("\nDigite a localização do exemplar (formato JSON).")
-    print('Exemplo: {"corredor": 5, "prateleira": "B"}')
+    print('Exemplo: {"corredor": 5, "prateleira": "3"}')
     while True:
         try:
             localizacao_str = input("Localização (JSON): ")
