@@ -2,7 +2,7 @@
 -- Table order and constraints may not be valid for execution.
 
 CREATE TABLE public.emprestimos (
-  id integer NOT NULL DEFAULT nextval('emprestimos_id_seq'::regclass),
+  id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
   usuario_id integer NOT NULL,
   exemplar_id integer NOT NULL,
   data_emprestimo timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
@@ -13,7 +13,7 @@ CREATE TABLE public.emprestimos (
   CONSTRAINT fk_exemplar FOREIGN KEY (exemplar_id) REFERENCES public.exemplares(id)
 );
 CREATE TABLE public.exemplares (
-  id integer NOT NULL DEFAULT nextval('exemplares_id_seq'::regclass),
+  id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
   livro_id integer NOT NULL,
   localizacao jsonb NOT NULL UNIQUE,
   disponivel boolean DEFAULT true,
@@ -21,7 +21,7 @@ CREATE TABLE public.exemplares (
   CONSTRAINT fk_livro FOREIGN KEY (livro_id) REFERENCES public.livros(livro_id)
 );
 CREATE TABLE public.livros (
-  livro_id integer NOT NULL DEFAULT nextval('livros_livro_id_seq'::regclass),
+  livro_id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
   titulo character varying NOT NULL,
   autor character varying,
   editora character varying,
@@ -29,7 +29,7 @@ CREATE TABLE public.livros (
   CONSTRAINT livros_pkey PRIMARY KEY (livro_id)
 );
 CREATE TABLE public.usuarios (
-  id integer NOT NULL DEFAULT nextval('usuarios_id_seq'::regclass),
+  id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
   nome character varying NOT NULL,
   email character varying NOT NULL UNIQUE,
   senha_hash character varying NOT NULL,
