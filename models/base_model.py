@@ -41,9 +41,13 @@ class BaseModel(ABC):
 
         try:
             if pk_value:
-                # UPDATE: Atualiza um registro existente
-                # O método update() espera um dicionário com os novos dados
-                query = supabase_client.table(self.table_name).update(data)
+                # UPDATE: Atualiza o registro existente
+                # Cria uma cópia dos dados para não modificar o objeto original
+                update_data = data.copy()
+                # Remove a chave primária do dicionário para evitar tentar atualizá-la               
+                if self.primary_key in update_data:
+                    del update_data[self.primary_key]
+                query = supabase_client.table(self.table_name).update(update_data)
                 query = query.eq(self.primary_key, pk_value)
                 result = query.execute()
             else:
