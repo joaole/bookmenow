@@ -5,7 +5,7 @@ from views import exemplar_view
 
 class ExemplarController:
     def __init__(self):
-        self.livros = LivroController()
+        self.__livros = LivroController()
     """
     Controlador para a gestão de exemplares.
     """
@@ -14,7 +14,7 @@ class ExemplarController:
         """
         Orquestra o processo de adicionar um novo exemplar.
         """
-        self.livros.listar_livros()
+        self.__livros.listar_livros()
         dados_exemplar = exemplar_view.get_exemplar_info()
 
         # Validação: Verifica se o livro associado ao exemplar realmente existe
