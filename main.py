@@ -44,13 +44,22 @@ def menu_gestao_exemplares():
         clear_screen()
         print("--- Gestão de Exemplares ---")
         print("1 - Cadastrar Novo Exemplar")
-        print("2 - Voltar ao Menu Principal")
+        print("2 - Listar Todos os Exemplares")
+        print("3 - Atualizar Exemplar")
+        print("4 - Deletar Exemplar")
+        print("5 - Voltar ao Menu Principal")
 
         escolha = input("\nEscolha uma opção: ")
 
         if escolha == '1':
             controller.adicionar_exemplar()
         elif escolha == '2':
+            controller.listar_exemplares()
+        elif escolha == '3':
+            controller.atualizar_exemplar()
+        elif escolha == '4':
+            controller.deletar_exemplar()
+        elif escolha == '5':
             break
         else:
             print("Opção inválida!")
