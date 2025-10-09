@@ -26,7 +26,13 @@ class BaseModel(ABC):
         Os nomes dos argumentos devem corresponder às colunas da tabela.
         """
         for key, value in kwargs.items():
-            setattr(self, key, value)
+            setattr(self, f"_{key}", value)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Converte o objeto em um dicionário, removendo o sublinhado dos nomes dos atributos.
+        """
+        return {key.lstrip('_'): value for key, value in self.__dict__.items() if key.startswith('_')}
 
     def save(self) -> None:
         """
@@ -36,8 +42,8 @@ class BaseModel(ABC):
         Caso contrário, executa um INSERT.
         """
         # Converte o objeto em um dicionário para o Supabase
-        data = self.__dict__
-        pk_value = getattr(self, self.primary_key, None)
+        data = self.to_dict()
+        pk_value = getattr(self, f"_{self.primary_key}", None)
 
         try:
             if pk_value:
@@ -75,7 +81,7 @@ class BaseModel(ABC):
         """
         Deleta o registro correspondente do banco de dados.
         """
-        pk_value = getattr(self, self.primary_key, None)
+        pk_value = getattr(self, f"_{self.primary_key}", None)
         if not pk_value:
             print("Erro: Não é possível deletar um objeto que ainda não foi salvo.")
             return
@@ -128,5 +134,5 @@ class BaseModel(ABC):
         """
         Representação em string do objeto, útil para debugging.
         """
-        attrs = ", ".join(f"{k}={v!r}" for k, v in self.__dict__.items())
+        attrs = ", ".join(f"{k}={v!r}" for k, v in self.to_dict().items())
         return f"<{self.__class__.__name__}({attrs})>"
