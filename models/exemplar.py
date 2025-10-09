@@ -10,17 +10,42 @@ class Exemplar(BaseModel):
     primary_key = "id"
 
     def __init__(self, livro_id: int, localizacao: Dict, disponivel: bool = True, id: int = None):
-        """
-        Inicializa uma instância de Exemplar.
+        super().__init__(
+            id=id,
+            livro_id=livro_id,
+            localizacao=localizacao,
+            disponivel=disponivel
+        )
 
-        Args:
-            livro_id (int): ID do livro ao qual este exemplar pertence.
-            localizacao (Dict): Objeto JSON com a localização (ex: {"corredor": 5, "prateleira": "B"}).
-            disponivel (bool, optional): Status de disponibilidade. Defaults to True.
-            id (int, optional): O ID do exemplar. Defaults to None.
-        """
-        super().__init__()
-        self.id = id
-        self.livro_id = livro_id
-        self.localizacao = localizacao
-        self.disponivel = disponivel
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @id.setter
+    def id(self, value: int):
+        self._id = value
+
+    @property
+    def livro_id(self) -> int:
+        return self._livro_id
+
+    @livro_id.setter
+    def livro_id(self, value: int):
+        self._livro_id = value
+
+    @property
+    def localizacao(self) -> Dict:
+        return self._localizacao
+
+    @localizacao.setter
+    def localizacao(self, value: Dict):
+        self._localizacao = value
+
+    @property
+    def disponivel(self) -> bool:
+        return self._disponivel
+
+    @disponivel.setter
+    def disponivel(self, value: bool):
+        self._disponivel = value
+

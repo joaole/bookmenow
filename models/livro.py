@@ -12,19 +12,51 @@ class Livro(BaseModel):
     primary_key = "livro_id"
 
     def __init__(self, titulo: str, autor: str = None, editora: str = None, ano_publicacao: int = None, livro_id: int = None):
-        """
-        Inicializa uma instância de Livro.
+        super().__init__(
+            livro_id=livro_id,
+            titulo=titulo,
+            autor=autor,
+            editora=editora,
+            ano_publicacao=ano_publicacao
+        )
 
-        Args:
-            titulo (str): O título do livro.
-            autor (str, optional): O autor do livro. Defaults to None.
-            editora (str, optional): A editora do livro. Defaults to None.
-            ano_publicacao (int, optional): O ano de publicação. Defaults to None.
-            livro_id (int, optional): O ID do livro (usado ao carregar do banco). Defaults to None.
-        """
-        super().__init__()
-        self.livro_id = livro_id
-        self.titulo = titulo
-        self.autor = autor
-        self.editora = editora
-        self.ano_publicacao = ano_publicacao
+    @property
+    def livro_id(self) -> int:
+        return self._livro_id
+
+    @livro_id.setter
+    def livro_id(self, value: int):
+        self._livro_id = value
+
+    @property
+    def titulo(self) -> str:
+        return self._titulo
+
+    @titulo.setter
+    def titulo(self, value: str):
+        self._titulo = value
+
+    @property
+    def autor(self) -> str:
+        return self._autor
+
+    @autor.setter
+    def autor(self, value: str):
+        self._autor = value
+
+    @property
+    def editora(self) -> str:
+        return self._editora
+
+    @editora.setter
+    def editora(self, value: str):
+        self._editora = value
+
+    @property
+    def ano_publicacao(self) -> int:
+        return self._ano_publicacao
+
+    @ano_publicacao.setter
+    def ano_publicacao(self, value: int):
+        self._ano_publicacao = value
+
