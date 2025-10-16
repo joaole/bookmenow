@@ -33,12 +33,12 @@ CREATE TABLE public.usuarios (
   nome character varying NOT NULL,
   email character varying NOT NULL UNIQUE,
   senha_hash character varying NOT NULL,
-  telefone character varying,
-  endereco text,
-  ativo boolean DEFAULT true,
-  data_cadastro timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  tipo_usuario character varying NOT NULL CHECK (tipo_usuario::text = ANY (ARRAY['leitor'::character varying, 'administrador'::character varying]::text[])),
-  matricula character varying UNIQUE,
+  telefone character varying NOT NULL,
+  endereco text NOT NULL,
+  ativo boolean NOT NULL DEFAULT true,
+  data_cadastro timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  tipo_usuario USER-DEFINED NOT NULL CHECK (tipo_usuario::text = ANY (ARRAY['leitor'::character varying::text, 'administrador'::character varying::text])),
+  matricula integer NOT NULL UNIQUE,
   cargo character varying,
   CONSTRAINT usuarios_pkey PRIMARY KEY (id)
 );

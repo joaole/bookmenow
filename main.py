@@ -1,6 +1,7 @@
 import os
 from controllers.livro_controller import LivroController
 from controllers.exemplar_controller import ExemplarController
+from controllers.usuario_controller import UsuarioController
 
 def clear_screen():
     """Limpa a tela do terminal."""
@@ -66,7 +67,7 @@ def menu_gestao_exemplares():
 
         input("\nPressione Enter para continuar...")
 
-def main():
+def menu_principal_logado():
     """Função principal que exibe o menu principal e gerencia a navegação."""
     while True:
         clear_screen()
@@ -82,6 +83,35 @@ def main():
             menu_gestao_livros()
         elif escolha == '2':
             menu_gestao_exemplares()
+        elif escolha == '3':
+            print("Saindo do sistema. Até logo!")
+            break
+        else:
+            print("Opção inválida! Tente novamente.")
+            input("\nPressione Enter para continuar...")
+
+def main():
+    """Função principal que exibe o menu inicial e gerencia a navegação."""
+    usuario_controller = UsuarioController()
+    exemplar_controller = ExemplarController()
+
+    while True:
+        clear_screen()
+        print("---- BookMeNow ----")
+        print("- Bem-vindo ao Sistema de Gestão de Bibliotecas -")
+        print("\n1 - Listar Livros Disponíveis")
+        print("2 - Fazer Login")
+        print("3 - Sair")
+
+        escolha = input("\nEscolha uma opção: ")
+
+        if escolha == '1':
+            exemplar_controller.listar_exemplares_disponiveis()
+            input("\nPressione Enter para continuar...")
+        elif escolha == '2':
+            usuario = usuario_controller.login()
+            if usuario:
+                menu_principal_logado()
         elif escolha == '3':
             print("Saindo do sistema. Até logo!")
             break

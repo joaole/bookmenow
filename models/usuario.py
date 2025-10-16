@@ -1,7 +1,8 @@
+from abc import ABC, abstractmethod
 
 from models.base_model import BaseModel
 
-class Usuario(BaseModel):
+class Usuario(BaseModel, ABC):
     """
     Representa a tabela 'usuarios' e serve como base para Leitor e Administrador.
     Implementa a estratégia de Herança de Tabela Única (Single-Table Inheritance).
@@ -90,12 +91,22 @@ class Usuario(BaseModel):
     def data_cadastro(self, value):
         self._data_cadastro = value
 
+    @abstractmethod
+    def realizar_login(self):
+        pass
+
+    @abstractmethod
+    def realizar_logout(self):
+        pass
+
 
 class Leitor(Usuario):
     """
     Representa um usuário do tipo 'leitor'.
     """
     def __init__(self, nome: str, email: str, senha_hash: str, matricula: str, **kwargs):
+        # Garante que o tipo_usuario não seja passado duas vezes
+        kwargs.pop('tipo_usuario', None)
         # Chama o __init__ da classe base (Usuario) com o tipo definido
         super().__init__(nome, email, senha_hash, tipo_usuario='leitor', matricula=matricula, **kwargs)
 
@@ -106,6 +117,14 @@ class Leitor(Usuario):
     @matricula.setter
     def matricula(self, value):
         self._matricula = value
+        
+    def realizar_login(self):
+        # Lógica de login específica para Leitor
+        print(f"Leitor {self.nome} realizou login.")
+
+    def realizar_logout(self):
+        # Lógica de logout específica para Leitor
+        print(f"Leitor {self.nome} realizou logout.")
 
 
 class Administrador(Usuario):
@@ -113,6 +132,8 @@ class Administrador(Usuario):
     Representa um usuário do tipo 'administrador'.
     """
     def __init__(self, nome: str, email: str, senha_hash: str, cargo: str, **kwargs):
+        # Garante que o tipo_usuario não seja passado duas vezes
+        kwargs.pop('tipo_usuario', None)
         # Chama o __init__ da classe base (Usuario) com o tipo definido
         super().__init__(nome, email, senha_hash, tipo_usuario='administrador', cargo=cargo, **kwargs)
 
@@ -123,4 +144,12 @@ class Administrador(Usuario):
     @cargo.setter
     def cargo(self, value):
         self._cargo = value
+        
+    def realizar_login(self):
+        # Lógica de login específica para Administrador
+        print(f"Administrador {self.nome} realizou login.")
+
+    def realizar_logout(self):
+        # Lógica de logout específica para Administrador
+        print(f"Administrador {self.nome} realizou logout.")
 

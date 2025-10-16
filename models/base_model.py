@@ -130,6 +130,39 @@ class BaseModel(ABC):
             print(f"Erro ao buscar todos os registros na tabela {cls.table_name}: {e}")
             return []
 
+    @classmethod
+    def find(cls: Type[T], **kwargs) -> T | None:
+        """
+        Busca um único registro com base em um ou mais filtros.
+
+        Args:
+            **kwargs: Pares de chave-valor para filtrar a busca.
+
+        Returns:
+            Uma instância da classe do modelo se encontrado, caso contrário None.
+        """
+        try:
+            query = supabase_client.table(cls.table_name).select("*")
+            for key, value in kwargs.items():
+                query = query.eq(key, value)
+            
+            result = query.limit(1).execute()
+            
+            if result.data:
+                data = result.data[0]
+                # Tratamento para Herança de Tabela Única (Single-Table Inheritance)
+                if cls.__name__ == 'Usuario' and 'tipo_usuario' in data:
+                    from models.usuario import Leitor, Administrador
+                    if data['tipo_usuario'] == 'leitor':
+                        return Leitor(**data)
+                    elif data['tipo_usuario'] == 'administrador':
+                        return Administrador(**data)
+                return cls(**data)
+            return None
+        except Exception as e:
+            print(f"Erro ao buscar na tabela {cls.table_name}: {e}")
+            return None
+
     def __repr__(self) -> str:
         """
         Representação em string do objeto, útil para debugging.
