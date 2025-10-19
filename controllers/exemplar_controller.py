@@ -38,6 +38,14 @@ class ExemplarController:
         exemplares = Exemplar.find_all()
         exemplar_view.display_exemplares(exemplares)
 
+    def listar_exemplares_disponiveis(self):
+        """
+        Orquestra a listagem de todos os exemplares disponíveis.
+        """
+        exemplares = Exemplar.find_all()
+        exemplares_disponiveis = [e for e in exemplares if e.disponivel]
+        exemplar_view.display_exemplares(exemplares_disponiveis)
+
     def atualizar_exemplar(self):
         """
         Orquestra a atualização de um exemplar cadastrado.
