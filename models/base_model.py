@@ -123,8 +123,24 @@ class BaseModel(ABC):
         try:
             result = supabase_client.table(cls.table_name).select("*").execute()
             if result.data:
-                # Cria uma lista de instâncias da classe
-                return [cls(**item) for item in result.data]
+                instances = []
+                # Tratamento para Herança de Tabela Única (Single-Table Inheritance)
+                if cls.__name__ == 'Usuario':
+                    from models.usuario import Leitor, Administrador
+                    for item in result.data:
+                        if item.get('tipo_usuario') == 'leitor':
+                            instances.append(Leitor(**item))
+                        elif item.get('tipo_usuario') == 'administrador':
+                            instances.append(Administrador(**item))
+                        else:
+                            # Caso o tipo não seja especificado ou seja inválido,
+                            # pode-se optar por não instanciar ou lançar um erro.
+                            # Aqui, simplesmente ignoramos.
+                            pass
+                    return instances
+                else:
+                    # Comportamento padrão para outras classes
+                    return [cls(**item) for item in result.data]
             return []
         except Exception as e:
             print(f"Erro ao buscar todos os registros na tabela {cls.table_name}: {e}")

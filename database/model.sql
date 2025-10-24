@@ -15,7 +15,7 @@ CREATE TABLE public.emprestimos (
 CREATE TABLE public.exemplares (
   id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
   livro_id integer NOT NULL,
-  localizacao jsonb NOT NULL UNIQUE,
+  localizacao jsonb NOT NULL,
   disponivel boolean DEFAULT true,
   CONSTRAINT exemplares_pkey PRIMARY KEY (id),
   CONSTRAINT fk_livro FOREIGN KEY (livro_id) REFERENCES public.livros(livro_id)

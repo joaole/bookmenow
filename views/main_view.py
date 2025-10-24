@@ -50,7 +50,7 @@ def menu_leitor(usuario):
         
         input("\nPressione Enter para continuar...")
 
-def menu_admin(usuario, menu_gestao_livros, menu_gestao_exemplares):
+def menu_admin(usuario, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios):
     """Exibe o menu de opções para o usuário Administrador."""
     while True:
         clear_screen()
@@ -82,7 +82,7 @@ def menu_admin(usuario, menu_gestao_livros, menu_gestao_exemplares):
         elif escolha == '2':
             menu_gestao_exemplares()
         elif escolha == '3':
-            print("\n[Gerenciar usuários] em desenvolvimento...")
+            menu_gestao_usuarios()
         elif escolha == '4':
             print("\n[Gerenciar empréstimos] em desenvolvimento...")
         elif escolha == '5':

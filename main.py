@@ -2,6 +2,7 @@ import os
 from controllers.livro_controller import LivroController
 from controllers.exemplar_controller import ExemplarController
 from controllers.usuario_controller import UsuarioController
+from controllers.administrador_controller import AdministradorController
 from views.main_view import menu_admin, menu_leitor
 
 def clear_screen():
@@ -70,6 +71,38 @@ def menu_gestao_exemplares():
 
         input("\nPressione Enter para continuar...")
 
+def menu_gestao_usuarios():
+    """Exibe o submenu de gestão de usuários e gerencia as ações."""
+    controller = AdministradorController()
+
+    while True:
+        clear_screen()
+        print("====== GERENCIAR USUÁRIOS ======")
+        print("1 - Listar todos os usuários")
+        print("2 - Cadastrar novo usuário")
+        print("3 - Editar informações de um usuário")
+        print("4 - Excluir usuário")
+        print("0 - Voltar")
+        print("-----------------------------------")
+        
+        escolha = input("Digite o número da opção desejada: ")
+
+        if escolha == '1':
+            controller.listar_usuarios()
+        elif escolha == '2':
+            controller.adicionar_usuario()
+        elif escolha == '3':
+            controller.atualizar_usuario()
+        elif escolha == '4':
+            controller.deletar_usuario()
+        elif escolha == '0':
+            break
+        else:
+            print("Opção inválida!")
+        
+        input("\nPressione Enter para continuar...")
+
+
 def main():
     """Função principal que exibe o menu inicial e gerencia a navegação."""
     usuario_controller = UsuarioController()
@@ -100,7 +133,7 @@ def main():
                 input("\nPressione Enter para continuar...")
         else:
             if usuario_logado.tipo_usuario == 'administrador':
-                acao = menu_admin(usuario_logado, menu_gestao_livros, menu_gestao_exemplares)
+                acao = menu_admin(usuario_logado, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios)
             else: # Assumindo que o outro tipo é 'leitor'
                 acao = menu_leitor(usuario_logado)
 
