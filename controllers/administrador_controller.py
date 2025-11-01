@@ -18,21 +18,51 @@ class AdministradorController:
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
         return hashed_password.decode('utf-8')
 
+import datetime
+
+class AdministradorController:
+    # ... (keep existing __init__ and _hash_password)
+
+    def _gerar_nova_matricula(self) -> int:
+        """
+        Gera uma nova matrícula com base no ano atual e na última matrícula cadastrada.
+        """
+        ano_atual = datetime.date.today().year
+        max_matricula = Usuario.get_max_matricula_for_year(ano_atual)
+
+        if max_matricula:
+            return max_matricula + 1
+        else:
+            return int(f"{ano_atual}001")
+
     def adicionar_usuario(self):
         """
-        Orquestra o processo de adicionar um novo usuário.
+        Orquestra o processo de adicionar um novo usuário com matrícula automática.
         """
-        dados_usuario = administrador_view.get_usuario_info()
-        
-        if not all([dados_usuario.get("nome"), dados_usuario.get("email"), dados_usuario.get("senha"), dados_usuario.get("matricula")]):
-            print("\nNome, email, senha e matrícula são obrigatórios!")
-            return
-
-        # Criptografa a senha
-        dados_usuario["senha_hash"] = self._hash_password(dados_usuario.pop("senha"))
-
-        usuario = Usuario(**dados_usuario)
         try:
+            nova_matricula = self._gerar_nova_matricula()
+            print(f"\nA matrícula do novo usuário será: {nova_matricula}")
+
+            dados_usuario = administrador_view.get_usuario_info()
+            dados_usuario['matricula'] = nova_matricula
+
+            if not all([dados_usuario.get("nome"), dados_usuario.get("email"), dados_usuario.get("senha")]):
+                print("\nNome, email e senha são obrigatórios!")
+                return
+
+            dados_usuario["senha_hash"] = self._hash_password(dados_usuario.pop("senha"))
+
+            tipo = dados_usuario.get("tipo_usuario")
+            if tipo == 'leitor':
+                from models.usuario import Leitor
+                usuario = Leitor(**dados_usuario)
+            elif tipo == 'administrador':
+                from models.usuario import Administrador
+                usuario = Administrador(**dados_usuario)
+            else:
+                print("Tipo de usuário inválido.")
+                return
+
             usuario.save()
             administrador_view.show_usuario_criado(usuario)
         except Exception as e:
@@ -40,17 +70,52 @@ class AdministradorController:
 
     def listar_usuarios(self):
         """
-        Orquestra a listagem de todos os usuários.
+        Orquestra a listagem de usuários com base em filtros.
         """
-        usuarios = Usuario.find_all()
-        administrador_view.display_usuarios(usuarios)
+        while True:
+            escolha = administrador_view.menu_listar_usuarios()
+            filtro = {}
+
+            if escolha == '1':
+                # Listar todos
+                pass
+            elif escolha == '2':
+                filtro = {"tipo_usuario": "administrador"}
+            elif escolha == '3':
+                filtro = {"tipo_usuario": "leitor"}
+            elif escolha == '4':
+                filtro = {"ativo": True}
+            elif escolha == '5':
+                filtro = {"ativo": False}
+            elif escolha == '0':
+                break
+            else:
+                print("Opção inválida!")
+                continue
+
+            try:
+                usuarios = Usuario.find_by(filtro)
+                administrador_view.display_usuarios(usuarios)
+            except Exception as e:
+                print(f"\nErro ao listar usuários: {e}")
+            
+            input("\nPressione Enter para continuar...")
+
+    def _simple_list_usuarios(self):
+        """Busca e exibe todos os usuários, retornando a lista."""
+        try:
+            usuarios = Usuario.find_all()
+            administrador_view.display_usuarios(usuarios)
+            return usuarios
+        except Exception as e:
+            print(f"\nErro ao listar usuários: {e}")
+            return []
 
     def atualizar_usuario(self):
         """
         Orquestra a atualização de um usuário existente.
         """
-        self.listar_usuarios()
-        usuarios = Usuario.find_all()
+        usuarios = self._simple_list_usuarios()
         if not usuarios:
             return
 
@@ -79,14 +144,13 @@ class AdministradorController:
 
     def deletar_usuario(self):
         """
-        Orquestra a exclusão de um usuário.
+        Orquestra a desativação de um usuário (soft delete).
         """
-        self.listar_usuarios()
-        usuarios = Usuario.find_all()
+        usuarios = self._simple_list_usuarios()
         if not usuarios:
             return
 
-        usuario_id = administrador_view.get_usuario_id_para_operacao("deletar")
+        usuario_id = administrador_view.get_usuario_id_para_operacao("desativar")
         usuario = Usuario.find_by_id(usuario_id)
 
         if not usuario:
@@ -94,7 +158,8 @@ class AdministradorController:
             return
 
         try:
-            usuario.delete()
-            administrador_view.show_usuario_deletado(usuario_id)
+            usuario.ativo = False
+            usuario.save()
+            administrador_view.show_usuario_desativado(usuario_id)
         except Exception as e:
-            print(f"\nErro ao deletar usuário: {e}")
+            print(f"\nErro ao desativar usuário: {e}")

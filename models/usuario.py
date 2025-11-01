@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from models.base_model import BaseModel
+from config import supabase_client
 
 class Usuario(BaseModel, ABC):
     """
@@ -84,12 +85,16 @@ class Usuario(BaseModel, ABC):
         self._ativo = value
 
     @property
-    def data_cadastro(self):
-        return self._data_cadastro
-
-    @data_cadastro.setter
     def data_cadastro(self, value):
         self._data_cadastro = value
+
+    @property
+    def matricula(self):
+        return self._matricula
+
+    @matricula.setter
+    def matricula(self, value):
+        self._matricula = value
 
     @abstractmethod
     def realizar_login(self):
@@ -98,6 +103,30 @@ class Usuario(BaseModel, ABC):
     @abstractmethod
     def realizar_logout(self):
         pass
+
+    @classmethod
+    def get_max_matricula_for_year(cls, year: int) -> int | None:
+        """
+        Busca a maior matrícula para um determinado ano.
+        """
+        try:
+            start_of_year = int(f"{year}000")
+            end_of_year = int(f"{year}999")
+
+            result = supabase_client.table(cls.table_name)\
+                .select("matricula")\
+                .gte("matricula", start_of_year)\
+                .lte("matricula", end_of_year)\
+                .order("matricula", desc=True)\
+                .limit(1)\
+                .execute()
+
+            if result.data:
+                return result.data[0]['matricula']
+            return None
+        except Exception as e:
+            print(f"Erro ao buscar maior matrícula: {e}")
+            return None
 
 
 class Leitor(Usuario):
@@ -110,14 +139,6 @@ class Leitor(Usuario):
         # Chama o __init__ da classe base (Usuario) com o tipo definido
         super().__init__(nome, email, senha_hash, tipo_usuario='leitor', matricula=matricula, **kwargs)
 
-    @property
-    def matricula(self):
-        return self._matricula
-
-    @matricula.setter
-    def matricula(self, value):
-        self._matricula = value
-        
     def realizar_login(self):
         # Lógica de login específica para Leitor
         print(f"Leitor {self.nome} realizou login.")
@@ -131,11 +152,11 @@ class Administrador(Usuario):
     """
     Representa um usuário do tipo 'administrador'.
     """
-    def __init__(self, nome: str, email: str, senha_hash: str, cargo: str, **kwargs):
+    def __init__(self, nome: str, email: str, senha_hash: str, matricula: str, cargo: str = None, **kwargs):
         # Garante que o tipo_usuario não seja passado duas vezes
         kwargs.pop('tipo_usuario', None)
         # Chama o __init__ da classe base (Usuario) com o tipo definido
-        super().__init__(nome, email, senha_hash, tipo_usuario='administrador', cargo=cargo, **kwargs)
+        super().__init__(nome, email, senha_hash, tipo_usuario='administrador', matricula=matricula, cargo=cargo, **kwargs)
 
     @property
     def cargo(self):

@@ -105,8 +105,15 @@ class BaseModel(ABC):
         try:
             result = supabase_client.table(cls.table_name).select("*").eq(cls.primary_key, pk_value).execute()
             if result.data:
-                # Cria uma instância da classe com os dados retornados
-                return cls(**result.data[0])
+                data = result.data[0]
+                # Tratamento para Herança de Tabela Única (Single-Table Inheritance)
+                if cls.__name__ == 'Usuario' and 'tipo_usuario' in data:
+                    from models.usuario import Leitor, Administrador
+                    if data['tipo_usuario'] == 'leitor':
+                        return Leitor(**data)
+                    elif data['tipo_usuario'] == 'administrador':
+                        return Administrador(**data)
+                return cls(**data) # Fallback for other classes
             return None
         except Exception as e:
             print(f"Erro ao buscar por ID na tabela {cls.table_name}: {e}")
@@ -144,6 +151,44 @@ class BaseModel(ABC):
             return []
         except Exception as e:
             print(f"Erro ao buscar todos os registros na tabela {cls.table_name}: {e}")
+            return []
+
+    @classmethod
+    def find_by(cls: Type[T], filters: Dict[str, Any]) -> List[T]:
+        """
+        Busca registros com base em um ou mais filtros.
+
+        Args:
+            filters: Dicionário com os pares de chave-valor para filtrar a busca.
+
+        Returns:
+            Uma lista de instâncias da classe do modelo.
+        """
+        try:
+            query = supabase_client.table(cls.table_name).select("*")
+            for key, value in filters.items():
+                query = query.eq(key, value)
+            
+            result = query.execute()
+
+            if result.data:
+                instances = []
+                # Tratamento para Herança de Tabela Única (Single-Table Inheritance)
+                if cls.__name__ == 'Usuario':
+                    from models.usuario import Leitor, Administrador
+                    for item in result.data:
+                        if item.get('tipo_usuario') == 'leitor':
+                            instances.append(Leitor(**item))
+                        elif item.get('tipo_usuario') == 'administrador':
+                            instances.append(Administrador(**item))
+                        else:
+                            pass
+                    return instances
+                else:
+                    return [cls(**item) for item in result.data]
+            return []
+        except Exception as e:
+            print(f"Erro ao buscar registros na tabela {cls.table_name}: {e}")
             return []
 
     @classmethod

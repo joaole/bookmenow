@@ -18,6 +18,8 @@ def display_usuarios(usuarios: List[Usuario]) -> None:
         print(f"  Nome: {usuario.nome}")
         print(f"  Email: {usuario.email}")
         print(f"  Matrícula: {usuario.matricula}")
+        if hasattr(usuario, 'cargo') and usuario.cargo:
+            print(f"  Cargo: {usuario.cargo}")
         print(f"  Tipo: {usuario.tipo_usuario}")
         print(f"  Ativo: {'Sim' if usuario.ativo else 'Não'}")
         print("-" * 20)
@@ -41,7 +43,6 @@ def get_usuario_info() -> Dict[str, Any]:
             break
         else:
             print("Tipo de usuário inválido. Tente novamente.")
-    matricula = input("Matrícula: ")
     cargo = input("Cargo (opcional): ")
 
     return {
@@ -51,7 +52,6 @@ def get_usuario_info() -> Dict[str, Any]:
         "telefone": telefone,
         "endereco": endereco,
         "tipo_usuario": tipo_usuario,
-        "matricula": int(matricula) if matricula.isdigit() else None,
         "cargo": cargo
     }
 
@@ -119,5 +119,21 @@ def show_usuario_criado(usuario: Usuario):
 def show_usuario_atualizado(usuario: Usuario):
     print(f"\nUsuário '{usuario.nome}' (ID: {usuario.id}) atualizado com sucesso!")
 
-def show_usuario_deletado(usuario_id: int):
-    print(f"\nUsuário com ID {usuario_id} deletado com sucesso!")
+def show_usuario_desativado(usuario_id: int):
+    print(f"\nUsuário com ID {usuario_id} desativado com sucesso!")
+
+def menu_listar_usuarios() -> str:
+    """
+    Exibe um menu de opções de filtro para a listagem de usuários.
+
+    Returns:
+        A opção de filtro escolhida pelo usuário.
+    """
+    print("\n--- Opções de Listagem ---")
+    print("1 - Listar todos")
+    print("2 - Listar apenas administradores")
+    print("3 - Listar apenas leitores")
+    print("4 - Listar apenas ativos")
+    print("5 - Listar apenas inativos")
+    print("0 - Voltar")
+    return input("\nEscolha uma opção de listagem: ")
