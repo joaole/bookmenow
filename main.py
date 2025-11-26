@@ -37,7 +37,7 @@ def menu_gestao_livros():
             break
         else:
             print("Opção inválida!")
-        
+              
         input("\nPressione Enter para continuar...")
 
 def menu_gestao_exemplares():
@@ -133,9 +133,9 @@ def main():
                 input("\nPressione Enter para continuar...")
         else:
             if usuario_logado.tipo_usuario == 'administrador':
-                acao = menu_admin(usuario_logado, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios)
+                acao = menu_admin(usuario_logado, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios)
             else: # Assumindo que o outro tipo é 'leitor'
-                acao = menu_leitor(usuario_logado)
+                acao = menu_leitor(usuario_logado, usuario_controller)
 
             if acao == 'logout':
                 usuario_logado = None

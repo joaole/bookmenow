@@ -4,7 +4,7 @@ def clear_screen():
     """Limpa a tela do terminal."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def menu_leitor(usuario):
+def menu_leitor(usuario, usuario_controller):
     """Exibe o menu de opções para o usuário Leitor."""
     while True:
         clear_screen()
@@ -39,7 +39,7 @@ def menu_leitor(usuario):
         elif escolha == '5':
             print("\n[Consultar meu histórico de empréstimos] em desenvolvimento...")
         elif escolha == '6':
-            print("\n[Alterar minha senha] em desenvolvimento...")
+            usuario_controller.alterar_senha(usuario)
         elif escolha == '7':
             print("\nSaindo...")
             return 'logout'
@@ -50,7 +50,7 @@ def menu_leitor(usuario):
         
         input("\nPressione Enter para continuar...")
 
-def menu_admin(usuario, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios):
+def menu_admin(usuario, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios):
     """Exibe o menu de opções para o usuário Administrador."""
     while True:
         clear_screen()
@@ -94,7 +94,7 @@ def menu_admin(usuario, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_
         elif escolha == '8':
             print("\n[Redefinir senha de um usuário] em desenvolvimento...")
         elif escolha == '9':
-            print("\n[Alterar minha própria senha] em desenvolvimento...")
+            usuario_controller.alterar_senha(usuario)
         elif escolha == '10':
             print("\nSaindo...")
             return 'logout'
