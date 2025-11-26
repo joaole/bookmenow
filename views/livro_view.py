@@ -97,3 +97,14 @@ def show_livro_atualizado(livro: Livro):
 def show_livro_deletado(livro_id: int):
     print(f"\nLivro com ID {livro_id} deletado com sucesso!")
 
+
+def get_titulo_busca() -> str:
+    """Solicita ao usuário o título para busca."""
+    return input("Digite o título do livro que você está buscando: ")
+
+
+def get_autor_busca() -> str:
+    """Solicita ao usuário o autor para busca."""
+    return input("Digite o nome do autor que você está buscando: ")
+
+

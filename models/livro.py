@@ -60,3 +60,21 @@ class Livro(BaseModel):
     def ano_publicacao(self, value: int):
         self._ano_publicacao = value
 
+    @classmethod
+    def search(cls, search_terms: dict):
+        """
+        Busca livros no banco de dados com base em termos de pesquisa parciais e insensíveis a maiúsculas/minúsculas.
+        """
+        try:
+            query = cls.get_query()
+            for column, value in search_terms.items():
+                query = query.ilike(column, f"%{value}%")
+            
+            result = query.execute()
+            
+            if result.data:
+                return [cls(**item) for item in result.data]
+            return []
+        except Exception as e:
+            print(f"Erro ao buscar livros: {e}")
+            return []

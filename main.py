@@ -3,7 +3,8 @@ from controllers.livro_controller import LivroController
 from controllers.exemplar_controller import ExemplarController
 from controllers.usuario_controller import UsuarioController
 from controllers.administrador_controller import AdministradorController
-from views.main_view import menu_admin, menu_leitor
+from controllers.emprestimo_controller import EmprestimoController
+from views.main_view import menu_admin, menu_leitor, menu_gestao_emprestimos
 
 def clear_screen():
     """Limpa a tela do terminal."""
@@ -37,7 +38,7 @@ def menu_gestao_livros():
             break
         else:
             print("Opção inválida!")
-        
+              
         input("\nPressione Enter para continuar...")
 
 def menu_gestao_exemplares():
@@ -107,7 +108,12 @@ def main():
     """Função principal que exibe o menu inicial e gerencia a navegação."""
     usuario_controller = UsuarioController()
     exemplar_controller = ExemplarController()
+    livro_controller = LivroController()
+    emprestimo_controller = EmprestimoController()
     usuario_logado = None
+
+    def _menu_gestao_emprestimos():
+        menu_gestao_emprestimos(emprestimo_controller)
 
     while True:
         if not usuario_logado:
@@ -133,9 +139,9 @@ def main():
                 input("\nPressione Enter para continuar...")
         else:
             if usuario_logado.tipo_usuario == 'administrador':
-                acao = menu_admin(usuario_logado, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios)
+                acao = menu_admin(usuario_logado, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios, _menu_gestao_emprestimos)
             else: # Assumindo que o outro tipo é 'leitor'
-                acao = menu_leitor(usuario_logado)
+                acao = menu_leitor(usuario_logado, usuario_controller, livro_controller, emprestimo_controller)
 
             if acao == 'logout':
                 usuario_logado = None

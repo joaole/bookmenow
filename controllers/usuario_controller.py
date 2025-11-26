@@ -32,3 +32,27 @@ class UsuarioController:
 
     def _verify_password(self, plain_password, hashed_password):
         return bcrypt.checkpw(plain_password.strip().encode('utf-8'), hashed_password.strip().encode('utf-8'))
+
+    def alterar_senha(self, usuario_logado):
+        dados_nova_senha = self.usuario_view.solicitar_nova_senha()
+        senha_atual = dados_nova_senha["senha_atual"]
+        nova_senha = dados_nova_senha["nova_senha"]
+        confirmacao_nova_senha = dados_nova_senha["confirmacao_nova_senha"]
+
+        if not self._verify_password(senha_atual, usuario_logado.senha_hash):
+            self.usuario_view.exibir_mensagem("Senha atual incorreta.")
+            return
+
+        if nova_senha != confirmacao_nova_senha:
+            self.usuario_view.exibir_mensagem("As novas senhas não coincidem.")
+            return
+
+        nova_senha_hash = bcrypt.hashpw(nova_senha.strip().encode('utf-8'), bcrypt.gensalt())
+        usuario_logado.senha_hash = nova_senha_hash.decode('utf-8')
+        
+        try:
+            usuario_logado.save()
+            self.usuario_view.exibir_mensagem("Senha alterada com sucesso!")
+        except Exception as e:
+            self.usuario_view.exibir_mensagem(f"Erro ao alterar a senha: {e}")
+

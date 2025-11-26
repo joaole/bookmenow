@@ -4,7 +4,7 @@ def clear_screen():
     """Limpa a tela do terminal."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def menu_leitor(usuario):
+def menu_leitor(usuario, usuario_controller, livro_controller, emprestimo_controller):
     """Exibe o menu de opções para o usuário Leitor."""
     while True:
         clear_screen()
@@ -29,17 +29,17 @@ def menu_leitor(usuario):
         escolha = input("Digite o número da opção desejada: ")
 
         if escolha == '1':
-            print("\n[Listar todos os livros do acervo] em desenvolvimento...")
+            livro_controller.listar_livros()
         elif escolha == '2':
-            print("\n[Buscar livro por título] em desenvolvimento...")
+            livro_controller.buscar_livro_por_titulo()
         elif escolha == '3':
-            print("\n[Buscar livro por autor] em desenvolvimento...")
+            livro_controller.buscar_livro_por_autor()
         elif escolha == '4':
-            print("\n[Visualizar meus empréstimos ativos] em desenvolvimento...")
+            emprestimo_controller.listar_emprestimos_ativos(usuario)
         elif escolha == '5':
-            print("\n[Consultar meu histórico de empréstimos] em desenvolvimento...")
+            emprestimo_controller.listar_historico_emprestimos(usuario)
         elif escolha == '6':
-            print("\n[Alterar minha senha] em desenvolvimento...")
+            usuario_controller.alterar_senha(usuario)
         elif escolha == '7':
             print("\nSaindo...")
             return 'logout'
@@ -50,7 +50,30 @@ def menu_leitor(usuario):
         
         input("\nPressione Enter para continuar...")
 
-def menu_admin(usuario, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios):
+def menu_gestao_emprestimos(emprestimo_controller):
+    """Exibe o submenu de gestão de empréstimos e gerencia as ações."""
+    while True:
+        clear_screen()
+        print("====== GERENCIAR EMPRÉSTIMOS ======")
+        print("1 - Registrar novo empréstimo")
+        print("2 - Registrar devolução")
+        print("0 - Voltar")
+        print("-----------------------------------")
+
+        escolha = input("Digite o número da opção desejada: ")
+
+        if escolha == '1':
+            emprestimo_controller.registrar_emprestimo()
+        elif escolha == '2':
+            emprestimo_controller.registrar_devolucao()
+        elif escolha == '0':
+            break
+        else:
+            print("Opção inválida!")
+        
+        input("\nPressione Enter para continuar...")
+
+def menu_admin(usuario, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios, menu_gestao_emprestimos):
     """Exibe o menu de opções para o usuário Administrador."""
     while True:
         clear_screen()
@@ -84,7 +107,7 @@ def menu_admin(usuario, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_
         elif escolha == '3':
             menu_gestao_usuarios()
         elif escolha == '4':
-            print("\n[Gerenciar empréstimos] em desenvolvimento...")
+            menu_gestao_emprestimos()
         elif escolha == '5':
             print("\n[Consultar histórico de um usuário] em desenvolvimento...")
         elif escolha == '6':
@@ -94,7 +117,7 @@ def menu_admin(usuario, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_
         elif escolha == '8':
             print("\n[Redefinir senha de um usuário] em desenvolvimento...")
         elif escolha == '9':
-            print("\n[Alterar minha própria senha] em desenvolvimento...")
+            usuario_controller.alterar_senha(usuario)
         elif escolha == '10':
             print("\nSaindo...")
             return 'logout'
