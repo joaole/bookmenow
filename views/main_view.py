@@ -4,7 +4,7 @@ def clear_screen():
     """Limpa a tela do terminal."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def menu_leitor(usuario, usuario_controller):
+def menu_leitor(usuario, usuario_controller, livro_controller, emprestimo_controller):
     """Exibe o menu de opções para o usuário Leitor."""
     while True:
         clear_screen()
@@ -29,15 +29,15 @@ def menu_leitor(usuario, usuario_controller):
         escolha = input("Digite o número da opção desejada: ")
 
         if escolha == '1':
-            print("\n[Listar todos os livros do acervo] em desenvolvimento...")
+            livro_controller.listar_livros()
         elif escolha == '2':
-            print("\n[Buscar livro por título] em desenvolvimento...")
+            livro_controller.buscar_livro_por_titulo()
         elif escolha == '3':
-            print("\n[Buscar livro por autor] em desenvolvimento...")
+            livro_controller.buscar_livro_por_autor()
         elif escolha == '4':
-            print("\n[Visualizar meus empréstimos ativos] em desenvolvimento...")
+            emprestimo_controller.listar_emprestimos_ativos(usuario)
         elif escolha == '5':
-            print("\n[Consultar meu histórico de empréstimos] em desenvolvimento...")
+            emprestimo_controller.listar_historico_emprestimos(usuario)
         elif escolha == '6':
             usuario_controller.alterar_senha(usuario)
         elif escolha == '7':

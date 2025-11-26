@@ -230,3 +230,10 @@ class BaseModel(ABC):
         """
         attrs = ", ".join(f"{k}={v!r}" for k, v in self.to_dict().items())
         return f"<{self.__class__.__name__}({attrs})>"
+
+    @classmethod
+    def get_query(cls):
+        """
+        Retorna um objeto de query base para a tabela da classe.
+        """
+        return supabase_client.table(cls.table_name).select("*")

@@ -3,6 +3,7 @@ from controllers.livro_controller import LivroController
 from controllers.exemplar_controller import ExemplarController
 from controllers.usuario_controller import UsuarioController
 from controllers.administrador_controller import AdministradorController
+from controllers.emprestimo_controller import EmprestimoController
 from views.main_view import menu_admin, menu_leitor
 
 def clear_screen():
@@ -107,6 +108,8 @@ def main():
     """Função principal que exibe o menu inicial e gerencia a navegação."""
     usuario_controller = UsuarioController()
     exemplar_controller = ExemplarController()
+    livro_controller = LivroController()
+    emprestimo_controller = EmprestimoController()
     usuario_logado = None
 
     while True:
@@ -135,7 +138,7 @@ def main():
             if usuario_logado.tipo_usuario == 'administrador':
                 acao = menu_admin(usuario_logado, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios)
             else: # Assumindo que o outro tipo é 'leitor'
-                acao = menu_leitor(usuario_logado, usuario_controller)
+                acao = menu_leitor(usuario_logado, usuario_controller, livro_controller, emprestimo_controller)
 
             if acao == 'logout':
                 usuario_logado = None

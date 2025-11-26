@@ -67,3 +67,51 @@ class Emprestimo(BaseModel):
     def data_devolucao_efetiva(self, value: date):
         self._data_devolucao_efetiva = value
 
+    @classmethod
+    def find_active_by_user(cls, user_id: int):
+        """
+        Busca todos os empréstimos ativos de um usuário específico.
+        Um empréstimo é considerado ativo se a data de devolução efetiva for NULA.
+        """
+        try:
+            # Busca empréstimos onde a data de devolução efetiva é nula para o usuário
+            emprestimos = cls.find_by({'usuario_id': user_id, 'data_devolucao_efetiva': None})
+
+            # Para cada empréstimo, busca o exemplar e o livro correspondente
+            from models.exemplar import Exemplar
+            from models.livro import Livro
+
+            for emprestimo in emprestimos:
+                exemplar = Exemplar.find_by_id(emprestimo.exemplar_id)
+                if exemplar:
+                    livro = Livro.find_by_id(exemplar.livro_id)
+                    exemplar.livro = livro  # Aninha o livro no exemplar
+                emprestimo.exemplar = exemplar  # Aninha o exemplar no empréstimo
+
+            return emprestimos
+        except Exception as e:
+            print(f"Erro ao buscar empréstimos ativos: {e}")
+            return []
+
+    @classmethod
+    def find_history_by_user(cls, user_id: int):
+        """
+        Busca o histórico completo de empréstimos de um usuário.
+        """
+        try:
+            emprestimos = cls.find_by({'usuario_id': user_id})
+
+            from models.exemplar import Exemplar
+            from models.livro import Livro
+
+            for emprestimo in emprestimos:
+                exemplar = Exemplar.find_by_id(emprestimo.exemplar_id)
+                if exemplar:
+                    livro = Livro.find_by_id(exemplar.livro_id)
+                    exemplar.livro = livro
+                emprestimo.exemplar = exemplar
+
+            return emprestimos
+        except Exception as e:
+            print(f"Erro ao buscar histórico de empréstimos: {e}")
+            return []

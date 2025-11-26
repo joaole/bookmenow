@@ -82,3 +82,20 @@ class LivroController:
 
         livro.delete()
         livro_view.show_livro_deletado(livro_id)
+
+    def buscar_livro_por_titulo(self):
+        """
+        Busca um livro pelo título.
+        """
+        titulo = livro_view.get_titulo_busca()
+        livros = Livro.search({"titulo": titulo})
+        livro_view.display_livros(livros)
+
+    def buscar_livro_por_autor(self):
+        """
+        Busca um livro pelo autor.
+        """
+        autor = livro_view.get_autor_busca()
+        livros = Livro.search({"autor": autor})
+        livro_view.display_livros(livros)
+
