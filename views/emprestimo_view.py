@@ -25,3 +25,29 @@ def display_emprestimos(emprestimos: List[Emprestimo], historico: bool = False):
         if historico and emprestimo.data_devolucao_efetiva:
             print(f"  Data de Devolução Efetiva: {emprestimo.data_devolucao_efetiva}")
         print("-" * 20)
+
+def get_emprestimo_info():
+    """
+    Solicita ao administrador o ID do usuário e do exemplar para um novo empréstimo.
+    """
+    print("\n--- Registrar Novo Empréstimo ---")
+    while True:
+        try:
+            usuario_id = int(input("Digite o ID do usuário: "))
+            exemplar_id = int(input("Digite o ID do exemplar: "))
+            return {"usuario_id": usuario_id, "exemplar_id": exemplar_id}
+        except ValueError:
+            print("IDs inválidos. Por favor, digite números inteiros.")
+
+def get_devolucao_info():
+    """
+    Solicita ao administrador o ID do empréstimo a ser devolvido.
+    """
+    print("\n--- Registrar Devolução ---")
+    while True:
+        try:
+            emprestimo_id = int(input("Digite o ID do empréstimo a ser devolvido: "))
+            return emprestimo_id
+        except ValueError:
+            print("ID inválido. Por favor, digite um número inteiro.")
+

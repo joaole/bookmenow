@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import List, TypeVar, Type, Dict, Any
 from config import supabase_client
+from datetime import date, datetime
 
 # Genérico para representar uma instância de uma subclasse de BaseModel
 T = TypeVar('T', bound='BaseModel')
@@ -41,38 +42,36 @@ class BaseModel(ABC):
         Se o objeto já tem um ID (chave primária), ele executa um UPDATE.
         Caso contrário, executa um INSERT.
         """
-        # Converte o objeto em um dicionário para o Supabase
         data = self.to_dict()
-        pk_value = getattr(self, f"_{self.primary_key}", None)
+        pk_value = data.get(self.primary_key)
+
+        serializable_data = {}
+        for key, value in data.items():
+            if isinstance(value, (datetime, date)):
+                serializable_data[key] = value.isoformat()
+            else:
+                serializable_data[key] = value
 
         try:
             if pk_value:
-                # UPDATE: Atualiza o registro existente
-                # Cria uma cópia dos dados para não modificar o objeto original
-                update_data = data.copy()
-                # Remove a chave primária do dicionário para evitar tentar atualizá-la               
-                if self.primary_key in update_data:
-                    del update_data[self.primary_key]
-                query = supabase_client.table(self.table_name).update(update_data)
+                if self.primary_key in serializable_data:
+                    del serializable_data[self.primary_key]
+                
+                query = supabase_client.table(self.table_name).update(serializable_data)
                 query = query.eq(self.primary_key, pk_value)
                 result = query.execute()
             else:
-                # INSERT: Insere um novo registro
-                # Cria uma cópia dos dados para não modificar o objeto original
-                insert_data = data.copy()
-                # Remove a chave primária do dicionário se ela for None,
-                # para que o banco de dados possa gerá-la automaticamente.
-                if insert_data.get(self.primary_key) is None:
-                    del insert_data[self.primary_key]
-                
-                result = supabase_client.table(self.table_name).insert(insert_data).execute()
-            
-            # Após a inserção, o Supabase retorna os dados do novo registro.
-            # Atualizamos o objeto com o ID gerado pelo banco.
+                if self.primary_key in serializable_data and serializable_data.get(self.primary_key) is None:
+                    del serializable_data[self.primary_key]
+
+                result = supabase_client.table(self.table_name).insert(serializable_data).execute()
+
             if not pk_value and result.data:
                 new_data = result.data[0]
                 for key, value in new_data.items():
-                    setattr(self, key, value)
+                    # Aqui, o ideal seria converter a string de volta para objeto datetime,
+                    # mas para manter a simplicidade, vamos apenas atribuir o valor.
+                    setattr(self, f"_{key}", value)
 
         except Exception as e:
             print(f"Erro ao salvar no banco de dados ({self.table_name}): {e}")
@@ -167,7 +166,10 @@ class BaseModel(ABC):
         try:
             query = supabase_client.table(cls.table_name).select("*")
             for key, value in filters.items():
-                query = query.eq(key, value)
+                if value is None:
+                    query = query.is_(key, value)
+                else:
+                    query = query.eq(key, value)
             
             result = query.execute()
 

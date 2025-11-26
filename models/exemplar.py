@@ -49,3 +49,9 @@ class Exemplar(BaseModel):
     def disponivel(self, value: bool):
         self._disponivel = value
 
+    @classmethod
+    def find_available_by_book(cls, livro_id: int):
+        """
+        Busca todos os exemplares disponíveis de um livro específico.
+        """
+        return cls.find_by({'livro_id': livro_id, 'disponivel': True})

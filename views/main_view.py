@@ -50,7 +50,30 @@ def menu_leitor(usuario, usuario_controller, livro_controller, emprestimo_contro
         
         input("\nPressione Enter para continuar...")
 
-def menu_admin(usuario, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios):
+def menu_gestao_emprestimos(emprestimo_controller):
+    """Exibe o submenu de gestão de empréstimos e gerencia as ações."""
+    while True:
+        clear_screen()
+        print("====== GERENCIAR EMPRÉSTIMOS ======")
+        print("1 - Registrar novo empréstimo")
+        print("2 - Registrar devolução")
+        print("0 - Voltar")
+        print("-----------------------------------")
+
+        escolha = input("Digite o número da opção desejada: ")
+
+        if escolha == '1':
+            emprestimo_controller.registrar_emprestimo()
+        elif escolha == '2':
+            emprestimo_controller.registrar_devolucao()
+        elif escolha == '0':
+            break
+        else:
+            print("Opção inválida!")
+        
+        input("\nPressione Enter para continuar...")
+
+def menu_admin(usuario, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios, menu_gestao_emprestimos):
     """Exibe o menu de opções para o usuário Administrador."""
     while True:
         clear_screen()
@@ -84,7 +107,7 @@ def menu_admin(usuario, usuario_controller, menu_gestao_livros, menu_gestao_exem
         elif escolha == '3':
             menu_gestao_usuarios()
         elif escolha == '4':
-            print("\n[Gerenciar empréstimos] em desenvolvimento...")
+            menu_gestao_emprestimos()
         elif escolha == '5':
             print("\n[Consultar histórico de um usuário] em desenvolvimento...")
         elif escolha == '6':

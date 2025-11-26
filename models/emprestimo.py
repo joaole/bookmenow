@@ -115,3 +115,15 @@ class Emprestimo(BaseModel):
         except Exception as e:
             print(f"Erro ao buscar histórico de empréstimos: {e}")
             return []
+
+    @classmethod
+    def has_overdue_books(cls, user_id: int) -> bool:
+        """
+        Verifica se um usuário possui livros com devolução em atraso.
+        """
+        active_loans = cls.find_active_by_user(user_id)
+        today = date.today()
+        for loan in active_loans:
+            if loan.data_devolucao_prevista < today:
+                return True
+        return False
