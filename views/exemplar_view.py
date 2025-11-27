@@ -1,7 +1,6 @@
 import json
 from typing import List, Dict, Any
 from models.exemplar import Exemplar
-from models.exemplar import Exemplar
 
 def display_exemplares(exemplares: List[Exemplar]) -> None:
     """
@@ -17,6 +16,7 @@ def display_exemplares(exemplares: List[Exemplar]) -> None:
     print("\n--- Lista de Exemplares ---")
     for exemplar in exemplares:
         print(f"ID: {exemplar.id}")
+        print(f"Nome do livro: {exemplar.exemplar_nome}")
         print(f"ID do livro: {exemplar.livro_id}")
         print(f"Localização: {exemplar.localizacao}")
         print(f"Disponibilidade: {exemplar.disponivel}")
@@ -30,7 +30,7 @@ def get_exemplar_info() -> Dict[str, Any]:
         Um dicionário com os dados do exemplar.
     """
     print("\n--- Cadastro de Novo Exemplar ---")
-    
+
     while True:
         try:
             livro_id_str = input("Digite o ID do livro ao qual este exemplar pertence: ")
@@ -40,24 +40,24 @@ def get_exemplar_info() -> Dict[str, Any]:
         except ValueError:
             print("ID do livro inválido. Por favor, digite um número.")
 
-    print("\nDigite a localização do exemplar (formato JSON).")
-    print('Exemplo: {"corredor": 5, "prateleira": "3"}')
+    print("\nInsira a localização do exemplar")
     while True:
         try:
-            localizacao_str = input("Localização (JSON): ")
+            corredor = int(input("Digite o corredor onde exemplar se encontra: "))
+            prateleira = int(input("Digite sua prateleira: "))
+            localizacao_str = f'{{"corredor": {corredor}, "prateleira": {prateleira}}}'
             localizacao = json.loads(localizacao_str)
-            if not isinstance(localizacao, dict):
-                raise ValueError("O JSON deve ser um objeto (dicionário).")
+            # if not isinstance(corredor, int) or not isinstance(prateleira, int):
+            #     raise ValueError("Valor inserido inválido")
             break
-        except json.JSONDecodeError:
-            print("Formato JSON inválido. Tente novamente.")
-        except ValueError as e:
-            print(e)
+        except ValueError:
+            print("Entrada inválida, somente números \n")
 
     return {
         "livro_id": livro_id,
         "localizacao": localizacao
     }
+
 def get_exemplar_id_para_operacao(operacao: str) -> int:
     """
     Solicita ao usuário o ID de um livro para uma operação específica (ex: deletar).

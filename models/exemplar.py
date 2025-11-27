@@ -9,12 +9,13 @@ class Exemplar(BaseModel):
     table_name = "exemplares"
     primary_key = "id"
 
-    def __init__(self, livro_id: int, localizacao: Dict, disponivel: bool = True, id: int = None):
+    def __init__(self, livro_id: int, localizacao: Dict, disponivel: bool = True, id: int = None, exemplar_nome: str = None):
         super().__init__(
             id=id,
             livro_id=livro_id,
             localizacao=localizacao,
-            disponivel=disponivel
+            disponivel=disponivel,
+            exemplar_nome=exemplar_nome
         )
 
     @property
@@ -32,6 +33,14 @@ class Exemplar(BaseModel):
     @livro_id.setter
     def livro_id(self, value: int):
         self._livro_id = value
+
+    @property
+    def exemplar_nome(self) -> str:
+        return self._exemplar_nome
+
+    @exemplar_nome.setter
+    def exemplar_nome(self, value: str):
+        self._exemplar_nome = value
 
     @property
     def localizacao(self) -> Dict:
