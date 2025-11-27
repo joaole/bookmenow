@@ -73,7 +73,7 @@ def menu_gestao_emprestimos(emprestimo_controller):
         
         input("\nPressione Enter para continuar...")
 
-def menu_admin(usuario, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios, menu_gestao_emprestimos):
+def menu_admin(usuario, usuario_controller, administrador_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios, menu_gestao_emprestimos):
     """Exibe o menu de opções para o usuário Administrador."""
     while True:
         clear_screen()
@@ -90,10 +90,9 @@ def menu_admin(usuario, usuario_controller, menu_gestao_livros, menu_gestao_exem
         print("4 - Gerenciar empréstimos")
         print("5 - Consultar histórico de um usuário")
         print("6 - Listar todos os empréstimos ativos")
-        print("7 - Listar todos os usuários cadastrados")
-        print("8 - Redefinir senha de um usuário")
-        print("9 - Alterar minha própria senha")
-        print("10 - Realizar logout")
+        print("7 - Redefinir senha de um usuário")
+        print("8 - Alterar minha própria senha")
+        print("9 - Realizar logout")
         print("----------------------------------------")
         print("0 - Sair do sistema")
         print("----------------------------------------")
@@ -111,14 +110,12 @@ def menu_admin(usuario, usuario_controller, menu_gestao_livros, menu_gestao_exem
         elif escolha == '5':
             print("\n[Consultar histórico de um usuário] em desenvolvimento...")
         elif escolha == '6':
-            print("\n[Listar todos os empréstimos ativos] em desenvolvimento...")
+            administrador_controller.listar_emprestimos_ativos()
         elif escolha == '7':
-            print("\n[Listar todos os usuários cadastrados] em desenvolvimento...")
-        elif escolha == '8':
             print("\n[Redefinir senha de um usuário] em desenvolvimento...")
-        elif escolha == '9':
+        elif escolha == '8':
             usuario_controller.alterar_senha(usuario)
-        elif escolha == '10':
+        elif escolha == '9':
             print("\nSaindo...")
             return 'logout'
         elif escolha == '0':

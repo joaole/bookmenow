@@ -1,5 +1,6 @@
 import bcrypt
 import os
+import datetime
 from dotenv import load_dotenv
 from models.usuario import Usuario
 from views import administrador_view
@@ -17,11 +18,6 @@ class AdministradorController:
         salt = bcrypt.gensalt(rounds=rounds)
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
         return hashed_password.decode('utf-8')
-
-import datetime
-
-class AdministradorController:
-    # ... (keep existing __init__ and _hash_password)
 
     def _gerar_nova_matricula(self) -> int:
         """
@@ -41,13 +37,13 @@ class AdministradorController:
         """
         try:
             nova_matricula = self._gerar_nova_matricula()
-            print(f"\nA matrícula do novo usuário será: {nova_matricula}")
+            print(f"A matrícula do novo usuário será: {nova_matricula}")
 
             dados_usuario = administrador_view.get_usuario_info()
             dados_usuario['matricula'] = nova_matricula
 
             if not all([dados_usuario.get("nome"), dados_usuario.get("email"), dados_usuario.get("senha")]):
-                print("\nNome, email e senha são obrigatórios!")
+                print("Nome, email e senha são obrigatórios!")
                 return
 
             dados_usuario["senha_hash"] = self._hash_password(dados_usuario.pop("senha"))
@@ -66,7 +62,7 @@ class AdministradorController:
             usuario.save()
             administrador_view.show_usuario_criado(usuario)
         except Exception as e:
-            print(f"\nErro ao criar usuário: {e}")
+            print(f"Erro ao criar usuário: {e}")
 
     def listar_usuarios(self):
         """
@@ -97,9 +93,21 @@ class AdministradorController:
                 usuarios = Usuario.find_by(filtro)
                 administrador_view.display_usuarios(usuarios)
             except Exception as e:
-                print(f"\nErro ao listar usuários: {e}")
+                print(f"Erro ao listar usuários: {e}")
             
-            input("\nPressione Enter para continuar...")
+            input("Pressione Enter para continuar...")
+
+    def listar_emprestimos_ativos(self):
+        """
+        Orquestra a listagem de todos os empréstimos ativos.
+        """
+        try:
+            from models.emprestimo import Emprestimo # Import inside the method to avoid circular dependency
+
+            emprestimos_ativos = Emprestimo.find_all_active_loans()
+            administrador_view.display_emprestimos_ativos(emprestimos_ativos)
+        except Exception as e:
+            print(f"Erro ao listar empréstimos ativos: {e}")
 
     def _simple_list_usuarios(self):
         """Busca e exibe todos os usuários, retornando a lista."""
@@ -108,7 +116,7 @@ class AdministradorController:
             administrador_view.display_usuarios(usuarios)
             return usuarios
         except Exception as e:
-            print(f"\nErro ao listar usuários: {e}")
+            print(f"Erro ao listar usuários: {e}")
             return []
 
     def atualizar_usuario(self):
@@ -123,7 +131,7 @@ class AdministradorController:
         usuario = Usuario.find_by_id(usuario_id)
 
         if not usuario:
-            print("\nUsuário não encontrado!")
+            print("Usuário não encontrado!")
             return
 
         novos_dados = administrador_view.get_dados_atualizacao_usuario(usuario)
@@ -140,7 +148,7 @@ class AdministradorController:
             usuario.save() # O método save() fará o UPDATE
             administrador_view.show_usuario_atualizado(usuario)
         except Exception as e:
-            print(f"\nErro ao atualizar usuário: {e}")
+            print(f"Erro ao atualizar usuário: {e}")
 
     def deletar_usuario(self):
         """
@@ -154,7 +162,7 @@ class AdministradorController:
         usuario = Usuario.find_by_id(usuario_id)
 
         if not usuario:
-            print("\nUsuário não encontrado!")
+            print("Usuário não encontrado!")
             return
 
         try:
@@ -162,4 +170,4 @@ class AdministradorController:
             usuario.save()
             administrador_view.show_usuario_desativado(usuario_id)
         except Exception as e:
-            print(f"\nErro ao desativar usuário: {e}")
+            print(f"Erro ao desativar usuário: {e}")

@@ -137,3 +137,28 @@ def menu_listar_usuarios() -> str:
     print("5 - Listar apenas inativos")
     print("0 - Voltar")
     return input("\nEscolha uma opção de listagem: ")
+
+def display_emprestimos_ativos(emprestimos: List[Any]) -> None:
+    """
+    Exibe uma lista de empréstimos ativos no terminal de forma formatada.
+
+    Args:
+        emprestimos: Uma lista de objetos Emprestimo.
+    """
+    if not emprestimos:
+        print("\nNenhum empréstimo ativo encontrado.")
+        return
+
+    print("\n--- Empréstimos Ativos ---")
+    for emprestimo in emprestimos:
+        print(f"ID do Empréstimo: {emprestimo.id}")
+        print(f"  Usuário: {emprestimo.usuario.nome} (Matrícula: {emprestimo.usuario.matricula})")
+        print(f"  Livro: {emprestimo.exemplar.livro.titulo} (ID do Livro: {emprestimo.exemplar.livro.livro_id})")
+        print(f"  Exemplar ID: {emprestimo.exemplar_id}")
+        data_emprestimo_str = emprestimo.data_emprestimo.strftime('%d/%m/%Y %H:%M') if emprestimo.data_emprestimo else 'N/A'
+        data_devolucao_prevista_str = emprestimo.data_devolucao_prevista.strftime('%d/%m/%Y') if emprestimo.data_devolucao_prevista else 'N/A'
+
+        print(f"  Data do Empréstimo: {data_emprestimo_str}")
+        print(f"  Data de Devolução Prevista: {data_devolucao_prevista_str}")
+        print("-" * 30)
+

@@ -110,6 +110,7 @@ def main():
     exemplar_controller = ExemplarController()
     livro_controller = LivroController()
     emprestimo_controller = EmprestimoController()
+    administrador_controller = AdministradorController()
     usuario_logado = None
 
     def _menu_gestao_emprestimos():
@@ -139,7 +140,7 @@ def main():
                 input("\nPressione Enter para continuar...")
         else:
             if usuario_logado.tipo_usuario == 'administrador':
-                acao = menu_admin(usuario_logado, usuario_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios, _menu_gestao_emprestimos)
+                acao = menu_admin(usuario_logado, usuario_controller, administrador_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios, _menu_gestao_emprestimos)
             else: # Assumindo que o outro tipo é 'leitor'
                 acao = menu_leitor(usuario_logado, usuario_controller, livro_controller, emprestimo_controller)
 
