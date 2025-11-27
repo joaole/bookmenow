@@ -108,11 +108,11 @@ def menu_admin(usuario, usuario_controller, administrador_controller, menu_gesta
         elif escolha == '4':
             menu_gestao_emprestimos()
         elif escolha == '5':
-            print("\n[Consultar histórico de um usuário] em desenvolvimento...")
+            administrador_controller.consultar_historico_usuario()
         elif escolha == '6':
             administrador_controller.listar_emprestimos_ativos()
         elif escolha == '7':
-            print("\n[Redefinir senha de um usuário] em desenvolvimento...")
+            administrador_controller.redefinir_senha_usuario()
         elif escolha == '8':
             usuario_controller.alterar_senha(usuario)
         elif escolha == '9':

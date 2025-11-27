@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 from models.usuario import Usuario
+from datetime import datetime, date
 
 def display_usuarios(usuarios: List[Usuario]) -> None:
     """
@@ -161,4 +162,60 @@ def display_emprestimos_ativos(emprestimos: List[Any]) -> None:
         print(f"  Data do Empréstimo: {data_emprestimo_str}")
         print(f"  Data de Devolução Prevista: {data_devolucao_prevista_str}")
         print("-" * 30)
+
+def display_historico_emprestimos(usuario: Usuario, historico: List[Any]) -> None:
+    """
+    Exibe o histórico de empréstimos de um usuário.
+
+    Args:
+        usuario: O objeto do usuário cujo histórico está sendo exibido.
+        historico: Uma lista de objetos Emprestimo.
+    """
+    print(f"\n--- Histórico de Empréstimos do Usuário: {usuario.nome} (ID: {usuario.id}) ---")
+
+    if not historico:
+        print("Nenhum empréstimo encontrado para este usuário.")
+        return
+
+    for emprestimo in historico:
+        status = "Devolvido"
+        if emprestimo.data_devolucao_efetiva is None:
+            if emprestimo.data_devolucao_prevista and emprestimo.data_devolucao_prevista < date.today():
+                status = "Atrasado"
+            else:
+                status = "Ativo"
+
+        print(f"ID do Empréstimo: {emprestimo.id}")
+        if hasattr(emprestimo, 'exemplar') and emprestimo.exemplar and hasattr(emprestimo.exemplar, 'livro') and emprestimo.exemplar.livro:
+            print(f"  Livro: {emprestimo.exemplar.livro.titulo}")
+        else:
+            print(f"  Livro: (Informação do livro indisponível)")
+
+        print(f"  Exemplar ID: {emprestimo.exemplar_id}")
+        
+        data_emprestimo_str = emprestimo.data_emprestimo.strftime('%d/%m/%Y %H:%M') if emprestimo.data_emprestimo and isinstance(emprestimo.data_emprestimo, (datetime, date)) else 'N/A'
+        data_devolucao_prevista_str = emprestimo.data_devolucao_prevista.strftime('%d/%m/%Y') if emprestimo.data_devolucao_prevista and isinstance(emprestimo.data_devolucao_prevista, (datetime, date)) else 'N/A'
+        data_devolucao_efetiva_str = emprestimo.data_devolucao_efetiva.strftime('%d/%m/%Y') if emprestimo.data_devolucao_efetiva and isinstance(emprestimo.data_devolucao_efetiva, (datetime, date)) else 'N/A'
+
+        print(f"  Data do Empréstimo: {data_emprestimo_str}")
+        print(f"  Data de Devolução Prevista: {data_devolucao_prevista_str}")
+        print(f"  Data de Devolução Efetiva: {data_devolucao_efetiva_str}")
+        print(f"  Status: {status}")
+        print("-" * 30)
+
+def get_nova_senha() -> str:
+    """
+    Solicita ao administrador a nova senha para um usuário.
+
+    Returns:
+        A nova senha inserida.
+    """
+    print("\n--- Redefinição de Senha ---")
+    return input("Digite a nova senha: ")
+
+def show_senha_redefinida(usuario: Usuario):
+    """
+    Exibe uma mensagem de sucesso após a redefinição da senha.
+    """
+    print(f"\nA senha do usuário '{usuario.nome}' (ID: {usuario.id}) foi redefinida com sucesso!")
 

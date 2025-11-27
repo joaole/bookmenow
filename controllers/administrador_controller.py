@@ -171,3 +171,57 @@ class AdministradorController:
             administrador_view.show_usuario_desativado(usuario_id)
         except Exception as e:
             print(f"Erro ao desativar usuário: {e}")
+
+    def consultar_historico_usuario(self):
+        """
+        Orquestra a consulta do histórico de empréstimos de um usuário específico.
+        """
+        try:
+            # Primeiro, lista os usuários para o admin saber qual ID usar
+            usuarios = self._simple_list_usuarios()
+            if not usuarios:
+                return
+
+            usuario_id = administrador_view.get_usuario_id_para_operacao("consultar o histórico")
+            usuario = Usuario.find_by_id(usuario_id)
+
+            if not usuario:
+                print("\nUsuário não encontrado!")
+                return
+
+            from models.emprestimo import Emprestimo
+            historico = Emprestimo.find_history_by_user(usuario_id)
+            administrador_view.display_historico_emprestimos(usuario, historico)
+
+        except Exception as e:
+            print(f"\nErro ao consultar histórico: {e}")
+
+    def redefinir_senha_usuario(self):
+        """
+        Orquestra a redefinição da senha de um usuário pelo administrador.
+        """
+        try:
+            usuarios = self._simple_list_usuarios()
+            if not usuarios:
+                return
+
+            usuario_id = administrador_view.get_usuario_id_para_operacao("redefinir a senha")
+            usuario = Usuario.find_by_id(usuario_id)
+
+            if not usuario:
+                print("\nUsuário não encontrado!")
+                return
+
+            nova_senha = administrador_view.get_nova_senha()
+            if not nova_senha:
+                print("\nA senha não pode estar em branco.")
+                return
+
+            nova_senha_hash = self._hash_password(nova_senha)
+            usuario.senha_hash = nova_senha_hash
+
+            usuario.save()
+            administrador_view.show_senha_redefinida(usuario)
+
+        except Exception as e:
+            print(f"\nErro ao redefinir a senha: {e}")

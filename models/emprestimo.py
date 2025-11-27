@@ -110,6 +110,26 @@ class Emprestimo(BaseModel):
                     livro = Livro.find_by_id(exemplar.livro_id)
                     exemplar.livro = livro
                 emprestimo.exemplar = exemplar
+                
+                # Convert date strings to objects
+                if emprestimo.data_emprestimo and isinstance(emprestimo.data_emprestimo, str):
+                    try:
+                        # Handle timezone 'Z' by replacing it with '+00:00'
+                        if emprestimo.data_emprestimo.endswith('Z'):
+                            emprestimo.data_emprestimo = emprestimo.data_emprestimo[:-1] + '+00:00'
+                        emprestimo.data_emprestimo = datetime.fromisoformat(emprestimo.data_emprestimo)
+                    except ValueError:
+                        try:
+                            # Fallback for formats without timezone
+                            emprestimo.data_emprestimo = datetime.strptime(emprestimo.data_emprestimo, '%Y-%m-%d %H:%M:%S.%f')
+                        except ValueError:
+                             emprestimo.data_emprestimo = datetime.strptime(emprestimo.data_emprestimo, '%Y-%m-%d %H:%M:%S')
+
+                if emprestimo.data_devolucao_prevista and isinstance(emprestimo.data_devolucao_prevista, str):
+                    emprestimo.data_devolucao_prevista = date.fromisoformat(emprestimo.data_devolucao_prevista)
+                
+                if emprestimo.data_devolucao_efetiva and isinstance(emprestimo.data_devolucao_efetiva, str):
+                    emprestimo.data_devolucao_efetiva = date.fromisoformat(emprestimo.data_devolucao_efetiva)
 
             return emprestimos
         except Exception as e:
