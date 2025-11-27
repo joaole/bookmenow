@@ -1,4 +1,3 @@
-
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -9,6 +8,7 @@ load_dotenv()
 # URL e Chave de Serviço do Supabase (substitua pelos seus valores ou use variáveis de ambiente)
 SUPABASE_URL = os.getenv("SUPABASE_URL", "SUA_URL_AQUI")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "SUA_CHAVE_DE_SERVICO_AQUI")
+
 
 def get_supabase_client() -> Client:
     """
@@ -32,6 +32,7 @@ def get_supabase_client() -> Client:
     except Exception as e:
         print(f"Erro ao conectar com o Supabase: {e}")
         exit(1)
+
 
 # Cliente global que pode ser importado por outros módulos
 supabase_client = get_supabase_client()

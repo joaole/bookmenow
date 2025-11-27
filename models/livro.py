@@ -1,23 +1,31 @@
-
 from models.base_model import BaseModel
+
 
 class Livro(BaseModel):
     """
     Representa a tabela 'livros' no banco de dados.
     Herda de BaseModel para obter a funcionalidade ORM.
     """
+
     # Nome da tabela no Supabase
     table_name = "livros"
     # Nome da chave primária da tabela
     primary_key = "livro_id"
 
-    def __init__(self, titulo: str, autor: str = None, editora: str = None, ano_publicacao: int = None, livro_id: int = None):
+    def __init__(
+        self,
+        titulo: str,
+        autor: str = None,
+        editora: str = None,
+        ano_publicacao: int = None,
+        livro_id: int = None,
+    ):
         super().__init__(
             livro_id=livro_id,
             titulo=titulo,
             autor=autor,
             editora=editora,
-            ano_publicacao=ano_publicacao
+            ano_publicacao=ano_publicacao,
         )
 
     @property
@@ -69,9 +77,9 @@ class Livro(BaseModel):
             query = cls.get_query()
             for column, value in search_terms.items():
                 query = query.ilike(column, f"%{value}%")
-            
+
             result = query.execute()
-            
+
             if result.data:
                 return [cls(**item) for item in result.data]
             return []

@@ -3,9 +3,11 @@ from models.livro import Livro
 from controllers.livro_controller import LivroController
 from views import exemplar_view
 
+
 class ExemplarController:
     def __init__(self):
         self.__livros = LivroController()
+
     """
     Controlador para a gestão de exemplares.
     """
@@ -22,13 +24,15 @@ class ExemplarController:
         livro_existente = Livro.find_by_id(livro_id)
 
         if not livro_existente:
-            print(f"\nErro: Nenhum livro encontrado com o ID {livro_id}. O exemplar não pode ser cadastrado.")
+            print(
+                f"\nErro: Nenhum livro encontrado com o ID {livro_id}. O exemplar não pode ser cadastrado."
+            )
             return
 
-        exemplar = Exemplar(exemplar_nome = livro_existente.titulo, **dados_exemplar)
+        exemplar = Exemplar(exemplar_nome=livro_existente.titulo, **dados_exemplar)
         exemplar.save()
         exemplar_view.show_exemplar_criado(exemplar)
-    
+
     def listar_exemplares(self):
         """
         Orquestra a listagem de todos os exemplares.
@@ -70,7 +74,7 @@ class ExemplarController:
         exemplar.localizacao = novos_dados["localizacao"]
         exemplar.disponivel = novos_dados["disponivel"]
 
-        exemplar.save() # O save() fará o update
+        exemplar.save()  # O save() fará o update
         exemplar_view.show_exemplar_atualizado(exemplar)
 
     def deletar_exemplar(self):

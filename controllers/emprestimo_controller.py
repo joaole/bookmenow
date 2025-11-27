@@ -2,7 +2,12 @@ from datetime import date, timedelta
 from models.emprestimo import Emprestimo
 from models.usuario import Usuario
 from models.exemplar import Exemplar
-from views.emprestimo_view import display_emprestimos, get_emprestimo_info, get_devolucao_info
+from views.emprestimo_view import (
+    display_emprestimos,
+    get_emprestimo_info,
+    get_devolucao_info,
+)
+
 
 class EmprestimoController:
     def registrar_emprestimo(self):
@@ -10,8 +15,8 @@ class EmprestimoController:
         Orquestra o processo de registrar um novo empréstimo.
         """
         dados = get_emprestimo_info()
-        usuario_id = dados['usuario_id']
-        exemplar_id = dados['exemplar_id']
+        usuario_id = dados["usuario_id"]
+        exemplar_id = dados["exemplar_id"]
 
         usuario = Usuario.find_by_id(usuario_id)
         if not usuario:
@@ -19,7 +24,9 @@ class EmprestimoController:
             return
 
         if Emprestimo.has_overdue_books(usuario_id):
-            print("Este usuário possui livros com devolução em atraso e não pode realizar novos empréstimos.")
+            print(
+                "Este usuário possui livros com devolução em atraso e não pode realizar novos empréstimos."
+            )
             return
 
         exemplar = Exemplar.find_by_id(exemplar_id)
@@ -30,14 +37,14 @@ class EmprestimoController:
         if not exemplar.disponivel:
             print("Este exemplar não está disponível para empréstimo.")
             return
-        
+
         data_emprestimo = date.today()
         data_devolucao_prevista = data_emprestimo + timedelta(days=14)
 
         novo_emprestimo = Emprestimo(
             usuario_id=usuario_id,
             exemplar_id=exemplar.id,
-            data_devolucao_prevista=data_devolucao_prevista
+            data_devolucao_prevista=data_devolucao_prevista,
         )
         novo_emprestimo.save()
 

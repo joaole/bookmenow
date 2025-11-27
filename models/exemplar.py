@@ -1,21 +1,29 @@
-
 from typing import Dict
 from models.base_model import BaseModel
+
 
 class Exemplar(BaseModel):
     """
     Representa a tabela 'exemplares' no banco de dados.
     """
+
     table_name = "exemplares"
     primary_key = "id"
 
-    def __init__(self, livro_id: int, localizacao: Dict, disponivel: bool = True, id: int = None, exemplar_nome: str = None):
+    def __init__(
+        self,
+        livro_id: int,
+        localizacao: Dict,
+        disponivel: bool = True,
+        id: int = None,
+        exemplar_nome: str = None,
+    ):
         super().__init__(
             id=id,
             livro_id=livro_id,
             localizacao=localizacao,
             disponivel=disponivel,
-            exemplar_nome=exemplar_nome
+            exemplar_nome=exemplar_nome,
         )
 
     @property
@@ -63,4 +71,4 @@ class Exemplar(BaseModel):
         """
         Busca todos os exemplares disponíveis de um livro específico.
         """
-        return cls.find_by({'livro_id': livro_id, 'disponivel': True})
+        return cls.find_by({"livro_id": livro_id, "disponivel": True})

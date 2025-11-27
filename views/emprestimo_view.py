@@ -1,6 +1,7 @@
 from typing import List
 from models.emprestimo import Emprestimo
 
+
 def display_emprestimos(emprestimos: List[Emprestimo], historico: bool = False):
     """
     Exibe uma lista de empréstimos (ativos ou histórico) no terminal.
@@ -26,6 +27,7 @@ def display_emprestimos(emprestimos: List[Emprestimo], historico: bool = False):
             print(f"  Data de Devolução Efetiva: {emprestimo.data_devolucao_efetiva}")
         print("-" * 20)
 
+
 def get_emprestimo_info():
     """
     Solicita ao administrador o ID do usuário e do exemplar para um novo empréstimo.
@@ -39,6 +41,7 @@ def get_emprestimo_info():
         except ValueError:
             print("IDs inválidos. Por favor, digite números inteiros.")
 
+
 def get_devolucao_info():
     """
     Solicita ao administrador o ID do empréstimo a ser devolvido.
@@ -50,4 +53,3 @@ def get_devolucao_info():
             return emprestimo_id
         except ValueError:
             print("ID inválido. Por favor, digite um número inteiro.")
-

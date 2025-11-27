@@ -1,6 +1,7 @@
 from typing import List, Dict, Any
 from models.livro import Livro
 
+
 def display_livros(livros: List[Livro]) -> None:
     """
     Exibe uma lista de livros no terminal de forma formatada.
@@ -20,6 +21,7 @@ def display_livros(livros: List[Livro]) -> None:
         print(f"  Editora: {livro.editora or 'Não informada'}")
         print(f"  Ano: {livro.ano_publicacao or 'Não informado'}")
         print("-" * 20)
+
 
 def get_livro_info() -> Dict[str, Any]:
     """
@@ -41,8 +43,9 @@ def get_livro_info() -> Dict[str, Any]:
         "titulo": titulo,
         "autor": autor,
         "editora": editora,
-        "ano_publicacao": ano_publicacao
+        "ano_publicacao": ano_publicacao,
     }
+
 
 def get_livro_id_para_operacao(operacao: str) -> int:
     """
@@ -60,6 +63,7 @@ def get_livro_id_para_operacao(operacao: str) -> int:
             return int(id_str)
         except ValueError:
             print("ID inválido. Por favor, digite um número.")
+
 
 def get_dados_atualizacao_livro(livro: Livro) -> Dict[str, Any]:
     """
@@ -85,14 +89,17 @@ def get_dados_atualizacao_livro(livro: Livro) -> Dict[str, Any]:
         "titulo": titulo,
         "autor": autor,
         "editora": editora,
-        "ano_publicacao": ano_publicacao
+        "ano_publicacao": ano_publicacao,
     }
+
 
 def show_livro_criado(livro: Livro):
     print(f"\nLivro '{livro.titulo}' (ID: {livro.livro_id}) cadastrado com sucesso!")
 
+
 def show_livro_atualizado(livro: Livro):
     print(f"\nLivro '{livro.titulo}' (ID: {livro.livro_id}) atualizado com sucesso!")
+
 
 def show_livro_deletado(livro_id: int):
     print(f"\nLivro com ID {livro_id} deletado com sucesso!")
@@ -106,5 +113,3 @@ def get_titulo_busca() -> str:
 def get_autor_busca() -> str:
     """Solicita ao usuário o autor para busca."""
     return input("Digite o nome do autor que você está buscando: ")
-
-

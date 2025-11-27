@@ -20,4 +20,3 @@ class UsuarioView:
     def exibir_mensagem(self, mensagem):
         print(f"{mensagem}")
         input("Pressione Enter para continuar...")
-
