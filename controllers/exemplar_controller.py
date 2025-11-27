@@ -25,7 +25,7 @@ class ExemplarController:
             print(f"\nErro: Nenhum livro encontrado com o ID {livro_id}. O exemplar não pode ser cadastrado.")
             return
 
-        exemplar = Exemplar(**dados_exemplar)
+        exemplar = Exemplar(exemplar_nome = livro_existente.titulo, **dados_exemplar)
         exemplar.save()
         exemplar_view.show_exemplar_criado(exemplar)
     
