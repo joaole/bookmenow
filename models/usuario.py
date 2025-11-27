@@ -3,21 +3,25 @@ from abc import ABC, abstractmethod
 from models.base_model import BaseModel
 from config import supabase_client
 
+
 class Usuario(BaseModel, ABC):
     """
     Representa a tabela 'usuarios' e serve como base para Leitor e Administrador.
     Implementa a estratégia de Herança de Tabela Única (Single-Table Inheritance).
     """
+
     table_name = "usuarios"
     primary_key = "id"
 
-    def __init__(self, nome: str, email: str, senha_hash: str, tipo_usuario: str, **kwargs):
+    def __init__(
+        self, nome: str, email: str, senha_hash: str, tipo_usuario: str, **kwargs
+    ):
         super().__init__(
             nome=nome,
             email=email,
             senha_hash=senha_hash,
             tipo_usuario=tipo_usuario,
-            **kwargs
+            **kwargs,
         )
 
     @property
@@ -113,16 +117,18 @@ class Usuario(BaseModel, ABC):
             start_of_year = int(f"{year}000")
             end_of_year = int(f"{year}999")
 
-            result = supabase_client.table(cls.table_name)\
-                .select("matricula")\
-                .gte("matricula", start_of_year)\
-                .lte("matricula", end_of_year)\
-                .order("matricula", desc=True)\
-                .limit(1)\
+            result = (
+                supabase_client.table(cls.table_name)
+                .select("matricula")
+                .gte("matricula", start_of_year)
+                .lte("matricula", end_of_year)
+                .order("matricula", desc=True)
+                .limit(1)
                 .execute()
+            )
 
             if result.data:
-                return result.data[0]['matricula']
+                return result.data[0]["matricula"]
             return None
         except Exception as e:
             print(f"Erro ao buscar maior matrícula: {e}")
@@ -133,11 +139,21 @@ class Leitor(Usuario):
     """
     Representa um usuário do tipo 'leitor'.
     """
-    def __init__(self, nome: str, email: str, senha_hash: str, matricula: str, **kwargs):
+
+    def __init__(
+        self, nome: str, email: str, senha_hash: str, matricula: str, **kwargs
+    ):
         # Garante que o tipo_usuario não seja passado duas vezes
-        kwargs.pop('tipo_usuario', None)
+        kwargs.pop("tipo_usuario", None)
         # Chama o __init__ da classe base (Usuario) com o tipo definido
-        super().__init__(nome, email, senha_hash, tipo_usuario='leitor', matricula=matricula, **kwargs)
+        super().__init__(
+            nome,
+            email,
+            senha_hash,
+            tipo_usuario="leitor",
+            matricula=matricula,
+            **kwargs,
+        )
 
     def realizar_login(self):
         # Lógica de login específica para Leitor
@@ -152,11 +168,28 @@ class Administrador(Usuario):
     """
     Representa um usuário do tipo 'administrador'.
     """
-    def __init__(self, nome: str, email: str, senha_hash: str, matricula: str, cargo: str = None, **kwargs):
+
+    def __init__(
+        self,
+        nome: str,
+        email: str,
+        senha_hash: str,
+        matricula: str,
+        cargo: str = None,
+        **kwargs,
+    ):
         # Garante que o tipo_usuario não seja passado duas vezes
-        kwargs.pop('tipo_usuario', None)
+        kwargs.pop("tipo_usuario", None)
         # Chama o __init__ da classe base (Usuario) com o tipo definido
-        super().__init__(nome, email, senha_hash, tipo_usuario='administrador', matricula=matricula, cargo=cargo, **kwargs)
+        super().__init__(
+            nome,
+            email,
+            senha_hash,
+            tipo_usuario="administrador",
+            matricula=matricula,
+            cargo=cargo,
+            **kwargs,
+        )
 
     @property
     def cargo(self):
@@ -165,7 +198,7 @@ class Administrador(Usuario):
     @cargo.setter
     def cargo(self, value):
         self._cargo = value
-        
+
     def realizar_login(self):
         # Lógica de login específica para Administrador
         print(f"Administrador {self.nome} realizou login.")
@@ -173,4 +206,3 @@ class Administrador(Usuario):
     def realizar_logout(self):
         # Lógica de logout específica para Administrador
         print(f"Administrador {self.nome} realizou logout.")
-

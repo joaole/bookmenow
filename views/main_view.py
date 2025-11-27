@@ -1,8 +1,10 @@
 import os
 
+
 def clear_screen():
     """Limpa a tela do terminal."""
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system("cls" if os.name == "nt" else "clear")
+
 
 def menu_leitor(usuario, usuario_controller, livro_controller, emprestimo_controller):
     """Exibe o menu de opções para o usuário Leitor."""
@@ -25,30 +27,31 @@ def menu_leitor(usuario, usuario_controller, livro_controller, emprestimo_contro
         print("----------------------------------------")
         print("0 - Sair do sistema")
         print("----------------------------------------")
-        
+
         escolha = input("Digite o número da opção desejada: ")
 
-        if escolha == '1':
+        if escolha == "1":
             livro_controller.listar_livros()
-        elif escolha == '2':
+        elif escolha == "2":
             livro_controller.buscar_livro_por_titulo()
-        elif escolha == '3':
+        elif escolha == "3":
             livro_controller.buscar_livro_por_autor()
-        elif escolha == '4':
+        elif escolha == "4":
             emprestimo_controller.listar_emprestimos_ativos(usuario)
-        elif escolha == '5':
+        elif escolha == "5":
             emprestimo_controller.listar_historico_emprestimos(usuario)
-        elif escolha == '6':
+        elif escolha == "6":
             usuario_controller.alterar_senha(usuario)
-        elif escolha == '7':
+        elif escolha == "7":
             print("\nSaindo...")
-            return 'logout'
-        elif escolha == '0':
-            return 'sair'
+            return "logout"
+        elif escolha == "0":
+            return "sair"
         else:
             print("\nOpção inválida! Tente novamente.")
-        
+
         input("\nPressione Enter para continuar...")
+
 
 def menu_gestao_emprestimos(emprestimo_controller):
     """Exibe o submenu de gestão de empréstimos e gerencia as ações."""
@@ -62,18 +65,27 @@ def menu_gestao_emprestimos(emprestimo_controller):
 
         escolha = input("Digite o número da opção desejada: ")
 
-        if escolha == '1':
+        if escolha == "1":
             emprestimo_controller.registrar_emprestimo()
-        elif escolha == '2':
+        elif escolha == "2":
             emprestimo_controller.registrar_devolucao()
-        elif escolha == '0':
+        elif escolha == "0":
             break
         else:
             print("Opção inválida!")
-        
+
         input("\nPressione Enter para continuar...")
 
-def menu_admin(usuario, usuario_controller, administrador_controller, menu_gestao_livros, menu_gestao_exemplares, menu_gestao_usuarios, menu_gestao_emprestimos):
+
+def menu_admin(
+    usuario,
+    usuario_controller,
+    administrador_controller,
+    menu_gestao_livros,
+    menu_gestao_exemplares,
+    menu_gestao_usuarios,
+    menu_gestao_emprestimos,
+):
     """Exibe o menu de opções para o usuário Administrador."""
     while True:
         clear_screen()
@@ -99,29 +111,29 @@ def menu_admin(usuario, usuario_controller, administrador_controller, menu_gesta
 
         escolha = input("Digite o número da opção desejada: ")
 
-        if escolha == '1':
+        if escolha == "1":
             menu_gestao_livros()
-        elif escolha == '2':
+        elif escolha == "2":
             menu_gestao_exemplares()
-        elif escolha == '3':
+        elif escolha == "3":
             menu_gestao_usuarios()
-        elif escolha == '4':
+        elif escolha == "4":
             menu_gestao_emprestimos()
-        elif escolha == '5':
+        elif escolha == "5":
             administrador_controller.consultar_historico_usuario()
-        elif escolha == '6':
+        elif escolha == "6":
             administrador_controller.listar_emprestimos_ativos()
-        elif escolha == '7':
+        elif escolha == "7":
             administrador_controller.redefinir_senha_usuario()
-        elif escolha == '8':
+        elif escolha == "8":
             usuario_controller.alterar_senha(usuario)
-        elif escolha == '9':
+        elif escolha == "9":
             print("\nSaindo...")
-            return 'logout'
-        elif escolha == '0':
-            return 'sair'
+            return "logout"
+        elif escolha == "0":
+            return "sair"
         else:
             print("\nOpção inválida! Tente novamente.")
 
-        if escolha not in ['1', '2']:
+        if escolha not in ["1", "2"]:
             input("\nPressione Enter para continuar...")

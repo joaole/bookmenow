@@ -2,6 +2,7 @@ import json
 from typing import List, Dict, Any
 from models.exemplar import Exemplar
 
+
 def display_exemplares(exemplares: List[Exemplar]) -> None:
     """
     Exibe uma lista de exemplares no terminal de forma formatada.
@@ -22,6 +23,7 @@ def display_exemplares(exemplares: List[Exemplar]) -> None:
         print(f"Disponibilidade: {exemplar.disponivel}")
         print("-" * 20)
 
+
 def get_exemplar_info() -> Dict[str, Any]:
     """
     Solicita ao usuário as informações para cadastrar um novo exemplar.
@@ -33,7 +35,9 @@ def get_exemplar_info() -> Dict[str, Any]:
 
     while True:
         try:
-            livro_id_str = input("Digite o ID do livro ao qual este exemplar pertence: ")
+            livro_id_str = input(
+                "Digite o ID do livro ao qual este exemplar pertence: "
+            )
             livro_id = int(livro_id_str)
 
             break
@@ -53,10 +57,8 @@ def get_exemplar_info() -> Dict[str, Any]:
         except ValueError:
             print("Entrada inválida, somente números \n")
 
-    return {
-        "livro_id": livro_id,
-        "localizacao": localizacao
-    }
+    return {"livro_id": livro_id, "localizacao": localizacao}
+
 
 def get_exemplar_id_para_operacao(operacao: str) -> int:
     """
@@ -73,6 +75,7 @@ def get_exemplar_id_para_operacao(operacao: str) -> int:
         except ValueError:
             print("ID inválido. Por favor, digite um número")
 
+
 def get_dados_atualizacao_exemplar(exemplar: Exemplar) -> Dict[str, Any]:
     """
     Solicita ao usuário os novos dados para atualizar um exemplar, mostrando os valores atuais.
@@ -85,20 +88,25 @@ def get_dados_atualizacao_exemplar(exemplar: Exemplar) -> Dict[str, Any]:
     print("Deixe o campo em branco manter o valor atual.")
 
     livro_id = input(f"ID livro [{exemplar.livro_id}]: ") or exemplar.livro_id
-    localizacao = input(f"localização [{exemplar.localizacao}]: ") or exemplar.localizacao
-    disponivel = input(f"disponibilidade [{exemplar.disponivel}]: ") or exemplar.disponivel
+    localizacao = (
+        input(f"localização [{exemplar.localizacao}]: ") or exemplar.localizacao
+    )
+    disponivel = (
+        input(f"disponibilidade [{exemplar.disponivel}]: ") or exemplar.disponivel
+    )
 
-    return {
-        "livro_id": livro_id,
-        "localizacao": localizacao,
-        "disponivel": disponivel
-    }
+    return {"livro_id": livro_id, "localizacao": localizacao, "disponivel": disponivel}
+
 
 def show_exemplar_criado(exemplar):
-    print(f"\nExemplar (ID: {exemplar.id}) para o livro ID {exemplar.livro_id} cadastrado com sucesso!")
+    print(
+        f"\nExemplar (ID: {exemplar.id}) para o livro ID {exemplar.livro_id} cadastrado com sucesso!"
+    )
+
 
 def show_exemplar_atualizado(exemplar):
     print(f"\nExemplar '{exemplar.id}' atualizado com sucesso!")
+
 
 def show_exemplar_deletado(exemplar_id: int):
     print(f"\nExemplar '{exemplar_id}' deletado com sucesso!")

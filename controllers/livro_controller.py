@@ -1,6 +1,7 @@
 from models.livro import Livro
 from views import livro_view
 
+
 class LivroController:
     """
     Controlador para a gestão de livros.
@@ -16,7 +17,7 @@ class LivroController:
         4. Informa o resultado na View.
         """
         dados_livro = livro_view.get_livro_info()
-        
+
         # Garante que o título não seja vazio
         if not dados_livro.get("titulo"):
             print("\nO título é obrigatório!")
@@ -53,14 +54,14 @@ class LivroController:
             return
 
         novos_dados = livro_view.get_dados_atualizacao_livro(livro)
-        
-        # Atualiza os atributos do objeto livro
-        livro.titulo = novos_dados['titulo']
-        livro.autor = novos_dados['autor']
-        livro.editora = novos_dados['editora']
-        livro.ano_publicacao = novos_dados['ano_publicacao']
 
-        livro.save() # O método save() fará o UPDATE
+        # Atualiza os atributos do objeto livro
+        livro.titulo = novos_dados["titulo"]
+        livro.autor = novos_dados["autor"]
+        livro.editora = novos_dados["editora"]
+        livro.ano_publicacao = novos_dados["ano_publicacao"]
+
+        livro.save()  # O método save() fará o UPDATE
         livro_view.show_livro_atualizado(livro)
 
     def deletar_livro(self):
@@ -98,4 +99,3 @@ class LivroController:
         autor = livro_view.get_autor_busca()
         livros = Livro.search({"autor": autor})
         livro_view.display_livros(livros)
-

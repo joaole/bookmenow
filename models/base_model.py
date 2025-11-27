@@ -1,11 +1,11 @@
-
 from abc import ABC, abstractmethod
 from typing import List, TypeVar, Type, Dict, Any
 from config import supabase_client
 from datetime import date, datetime
 
 # Genérico para representar uma instância de uma subclasse de BaseModel
-T = TypeVar('T', bound='BaseModel')
+T = TypeVar("T", bound="BaseModel")
+
 
 class BaseModel(ABC):
     """
@@ -33,7 +33,11 @@ class BaseModel(ABC):
         """
         Converte o objeto em um dicionário, removendo o sublinhado dos nomes dos atributos.
         """
-        return {key.lstrip('_'): value for key, value in self.__dict__.items() if key.startswith('_')}
+        return {
+            key.lstrip("_"): value
+            for key, value in self.__dict__.items()
+            if key.startswith("_")
+        }
 
     def save(self) -> None:
         """
@@ -56,15 +60,22 @@ class BaseModel(ABC):
             if pk_value:
                 if self.primary_key in serializable_data:
                     del serializable_data[self.primary_key]
-                
+
                 query = supabase_client.table(self.table_name).update(serializable_data)
                 query = query.eq(self.primary_key, pk_value)
                 result = query.execute()
             else:
-                if self.primary_key in serializable_data and serializable_data.get(self.primary_key) is None:
+                if (
+                    self.primary_key in serializable_data
+                    and serializable_data.get(self.primary_key) is None
+                ):
                     del serializable_data[self.primary_key]
 
-                result = supabase_client.table(self.table_name).insert(serializable_data).execute()
+                result = (
+                    supabase_client.table(self.table_name)
+                    .insert(serializable_data)
+                    .execute()
+                )
 
             if not pk_value and result.data:
                 new_data = result.data[0]
@@ -86,7 +97,9 @@ class BaseModel(ABC):
             return
 
         try:
-            supabase_client.table(self.table_name).delete().eq(self.primary_key, pk_value).execute()
+            supabase_client.table(self.table_name).delete().eq(
+                self.primary_key, pk_value
+            ).execute()
         except Exception as e:
             print(f"Erro ao deletar no banco de dados ({self.table_name}): {e}")
 
@@ -102,17 +115,23 @@ class BaseModel(ABC):
             Uma instância da classe do modelo se encontrado, caso contrário None.
         """
         try:
-            result = supabase_client.table(cls.table_name).select("*").eq(cls.primary_key, pk_value).execute()
+            result = (
+                supabase_client.table(cls.table_name)
+                .select("*")
+                .eq(cls.primary_key, pk_value)
+                .execute()
+            )
             if result.data:
                 data = result.data[0]
                 # Tratamento para Herança de Tabela Única (Single-Table Inheritance)
-                if cls.__name__ == 'Usuario' and 'tipo_usuario' in data:
+                if cls.__name__ == "Usuario" and "tipo_usuario" in data:
                     from models.usuario import Leitor, Administrador
-                    if data['tipo_usuario'] == 'leitor':
+
+                    if data["tipo_usuario"] == "leitor":
                         return Leitor(**data)
-                    elif data['tipo_usuario'] == 'administrador':
+                    elif data["tipo_usuario"] == "administrador":
                         return Administrador(**data)
-                return cls(**data) # Fallback for other classes
+                return cls(**data)  # Fallback for other classes
             return None
         except Exception as e:
             print(f"Erro ao buscar por ID na tabela {cls.table_name}: {e}")
@@ -131,12 +150,13 @@ class BaseModel(ABC):
             if result.data:
                 instances = []
                 # Tratamento para Herança de Tabela Única (Single-Table Inheritance)
-                if cls.__name__ == 'Usuario':
+                if cls.__name__ == "Usuario":
                     from models.usuario import Leitor, Administrador
+
                     for item in result.data:
-                        if item.get('tipo_usuario') == 'leitor':
+                        if item.get("tipo_usuario") == "leitor":
                             instances.append(Leitor(**item))
-                        elif item.get('tipo_usuario') == 'administrador':
+                        elif item.get("tipo_usuario") == "administrador":
                             instances.append(Administrador(**item))
                         else:
                             # Caso o tipo não seja especificado ou seja inválido,
@@ -170,18 +190,19 @@ class BaseModel(ABC):
                     query = query.is_(key, value)
                 else:
                     query = query.eq(key, value)
-            
+
             result = query.execute()
 
             if result.data:
                 instances = []
                 # Tratamento para Herança de Tabela Única (Single-Table Inheritance)
-                if cls.__name__ == 'Usuario':
+                if cls.__name__ == "Usuario":
                     from models.usuario import Leitor, Administrador
+
                     for item in result.data:
-                        if item.get('tipo_usuario') == 'leitor':
+                        if item.get("tipo_usuario") == "leitor":
                             instances.append(Leitor(**item))
-                        elif item.get('tipo_usuario') == 'administrador':
+                        elif item.get("tipo_usuario") == "administrador":
                             instances.append(Administrador(**item))
                         else:
                             pass
@@ -208,17 +229,18 @@ class BaseModel(ABC):
             query = supabase_client.table(cls.table_name).select("*")
             for key, value in kwargs.items():
                 query = query.eq(key, value)
-            
+
             result = query.limit(1).execute()
-            
+
             if result.data:
                 data = result.data[0]
                 # Tratamento para Herança de Tabela Única (Single-Table Inheritance)
-                if cls.__name__ == 'Usuario' and 'tipo_usuario' in data:
+                if cls.__name__ == "Usuario" and "tipo_usuario" in data:
                     from models.usuario import Leitor, Administrador
-                    if data['tipo_usuario'] == 'leitor':
+
+                    if data["tipo_usuario"] == "leitor":
                         return Leitor(**data)
-                    elif data['tipo_usuario'] == 'administrador':
+                    elif data["tipo_usuario"] == "administrador":
                         return Administrador(**data)
                 return cls(**data)
             return None
